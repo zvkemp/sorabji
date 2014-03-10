@@ -1,5 +1,7 @@
 require "sorabji/version"
 
 module Sorabji
-  # Your code goes here...
+  require 'sorabji/node_extensions'
+  require 'sorabji/parser'
 end
+

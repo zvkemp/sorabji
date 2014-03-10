@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Sorabji::VERSION
   spec.authors       = ["zvkemp"]
   spec.email         = ["zvkemp@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Small language compiling to Ruby}
+  spec.description   = %q{Write a longer description. Optional.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -18,6 +18,10 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
+  spec.add_dependency 'treetop'
   spec.add_development_dependency "bundler", "~> 1.5"
   spec.add_development_dependency "rake"
+
+  spec.add_development_dependency 'guard'
+  spec.add_development_dependency 'guard-minitest'
 end

@@ -1,0 +1,9 @@
+grammar Sorabji
+  rule integer
+    [0-9]+ {
+      def to_ast
+        Sorabji::IntegerLiteral.new(text_value.to_i)
+      end
+    }
+  end
+end

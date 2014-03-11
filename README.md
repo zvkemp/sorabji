@@ -28,6 +28,10 @@ Or install it yourself as:
   - TODO: implement messaging whitelist
   - TODO: define how reference objects are looked up
 
+## Todo
+
+- how to handle integer division cleanly, without violating the expectations of non-developers (i.e. convert to float by default?)?
+
 
 ## Contributing
 

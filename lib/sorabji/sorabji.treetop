@@ -4,7 +4,15 @@ grammar Sorabji
   end
 
   rule entity
-    ( reference_object_identifier / object_identifier / integer / identifier )
+    ( operation / value_entity / identifier / operator / space )
+  end
+
+  rule value_entity
+    ( brackets / reference_object_identifier / object_identifier / integer )
+  end
+
+  rule operation
+    left:value_entity space* operator:operator space* right:(operation / value_entity) <Sorabji::OperationNode>
   end
 
   rule reference_object_identifier
@@ -15,11 +23,23 @@ grammar Sorabji
     '{' ident:( identifier / integer ) '}' <Sorabji::ObjectIdentifierNode>
   end
 
+  rule brackets
+    '(' content:( entity / operation ) ')' <Sorabji::BracketedNode>
+  end
+
   rule integer
     [0-9]+ <Sorabji::IntegerLiteralNode>
   end
 
   rule identifier
     [a-z_]+ <Sorabji::IdentifierNode>
+  end
+
+  rule operator
+    [+-/*] <Sorabji::OperatorNode>
+  end
+
+  rule space
+    [\s]+
   end
 end

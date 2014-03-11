@@ -5,8 +5,6 @@ module Sorabji
   class Parser
     base_path = File.expand_path(File.dirname(__FILE__))
     Treetop.load(File.join(base_path, 'sorabji.treetop'))
-    @@parser = SorabjiParser.new
-
 
     class << self
       def parse(data)
@@ -20,9 +18,22 @@ module Sorabji
       private
 
         def parser
-          @@parser
+          puts "parser..."
+          Sorabji.recompile!
+          SorabjiParser.new
         end
+
     end
+  end
+
+
+  def Sorabji.parse(*args)
+    Parser.parse(*args)
+  end
+  
+  def self.recompile!
+    base_path = File.expand_path(File.dirname(__FILE__))
+    Treetop.load(File.join(base_path, 'sorabji.treetop'))
   end
 
   class SyntaxError < ::SyntaxError

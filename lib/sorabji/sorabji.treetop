@@ -1,9 +1,10 @@
 grammar Sorabji
-  rule integer
-    [0-9]+ {
-      def to_ast
-        Sorabji::IntegerLiteral.new(text_value.to_i)
-      end
-    }
+  rule object_identifier
+    '{' number:integer '}' <Sorabji::ObjectIdentifierNode>
   end
+
+  rule integer
+    [0-9]+ <Sorabji::IntegerLiteralNode>
+  end
+
 end

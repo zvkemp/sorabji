@@ -3,6 +3,7 @@ require_relative '../spec_helper'
 describe Sorabji::Parser do
   # let(:parser){ Sorabji::Parser }
   let(:parser){ SorabjiParser.new }
+  let(:parse){ -> (str) { parser.parse(str) } }
   specify { parser.wont_be_nil }
   specify { parser.must_be_instance_of SorabjiParser }
 
@@ -11,14 +12,15 @@ describe Sorabji::Parser do
 
 
   describe 'simple expressions' do
-    let(:integer){ '123' }
-    let(:respondent_variable){ "{123}" }
-    let(:respondent_symbol){ "{external_id}" }
-    let(:survey_variable){ "{{123}}" }
-
     specify "parsing an integer" do
-      parse_tree = parser.parse(integer)
+      parse_tree = parse['123']
       parse_tree.to_ast.must_equal Sorabji::IntegerLiteral.new(123)
     end
+
+    specify "identifier" do
+      parse_tree = parse['{123}']
+      parse_tree.to_ast.must_equal Sorabji::ObjectIdentifier.new(123)
+    end
+
   end
 end

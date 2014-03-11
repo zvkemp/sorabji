@@ -6,12 +6,10 @@ module Sorabji
   class StatementNode < ASTNode
     def to_ast
       elements.map do |e|
-        puts e.inspect
         e.to_ast
       end
     end
   end
-  
 
   class IntegerLiteralNode < ASTNode
     def to_ast

@@ -2,6 +2,13 @@ require 'treetop'
 module Sorabji
   class ASTNode < Treetop::Runtime::SyntaxNode; end
 
+  class StatementNode < ASTNode
+    def to_ast
+      elements.map(&:to_ast)
+    end
+  end
+  
+
   class IntegerLiteralNode < ASTNode
     def to_ast
       IntegerLiteral.new(text_value.to_i)
@@ -13,19 +20,10 @@ module Sorabji
 
   class ObjectIdentifierNode < ASTNode
     def to_ast
-      ObjectIdentifier.new(number.to_ast.value)
+      ObjectIdentifier.new(ident.to_ast.value)
     end
   end
   class ObjectIdentifier < Struct.new(:value); end
-
-
-
-  class ObjectSymbolIdentifierNode < ASTNode
-    def to_ast
-      ObjectSymbolIdentifier.new(text_value.to_sym)
-    end
-  end
-  class ObjectSymbolIdentifier < Struct.new(:value); end
 
 
 

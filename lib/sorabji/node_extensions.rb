@@ -16,7 +16,12 @@ module Sorabji
       IntegerLiteral.new(text_value.to_i)
     end
   end
-  class IntegerLiteral < Struct.new(:value); end
+
+  class IntegerLiteral < Struct.new(:value)
+    def to_proc
+      ->(*args){ value }
+    end
+  end
 
 
 
@@ -25,9 +30,26 @@ module Sorabji
       ObjectIdentifier.new(ident.to_ast.value)
     end
   end
-  class ObjectIdentifier < Struct.new(:value); end
+
+  class ObjectIdentifier < Struct.new(:value)
+    def to_proc
+      ->(r){ r[value] }
+    end
+  end
 
 
+
+  class ReferenceObjectIdentifierNode < ASTNode
+    def to_ast
+      ReferenceObjectIdentifier.new(ident.to_ast.value)
+    end
+  end
+
+  class ReferenceObjectIdentifier < Struct.new(:value)
+    def to_proc
+      ->(r){ r.reference_object.send(value) }
+    end
+  end
 
   class VariableNode < ASTNode; end
   class Variable < Struct.new(:value); end
@@ -44,5 +66,10 @@ module Sorabji
       Identifier.new(text_value.to_sym)
     end
   end
-  class Identifier < Struct.new(:value); end
+
+  class Identifier < Struct.new(:value)
+    def to_proc
+      ->(*args){ value }
+    end
+  end
 end

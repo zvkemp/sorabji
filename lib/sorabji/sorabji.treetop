@@ -1,6 +1,14 @@
 grammar Sorabji
   rule statement
-    ( object_identifier / integer / identifier )* <Sorabji::StatementNode>
+    entity* <Sorabji::StatementNode>
+  end
+
+  rule entity
+    ( reference_object_identifier / object_identifier / integer / identifier )
+  end
+
+  rule reference_object_identifier
+    '{' ident:object_identifier '}' <Sorabji::ReferenceObjectIdentifierNode>
   end
 
   rule object_identifier

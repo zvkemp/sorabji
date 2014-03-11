@@ -18,7 +18,16 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+- Basic identifiers (hash keys)
+  - strings are converted to symbols: `{external_id}` becomes `object[:external_id]`
+  - integers are used as-is `{123}` becomes `object[123]`
+
+- Reference identifiers (method symbols)
+  - only strings permitted
+  - sent as messages to a reference object: `{{year}}` becomes `object.reference_object.send(:year)`
+  - TODO: implement messaging whitelist
+  - TODO: define how reference objects are looked up
+
 
 ## Contributing
 

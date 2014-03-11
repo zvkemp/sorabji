@@ -1,4 +1,16 @@
 grammar Sorabji
+  rule statement
+    ( object_symbol_identifier / object_identifier / integer / identifier )* {
+      def to_ast
+        elements.map(&:to_ast)
+      end
+    }
+  end
+
+  rule object_symbol_identifier
+    '{' symbol:identifier '}' <Sorabji::ObjectIdentifierNode>
+  end
+
   rule object_identifier
     '{' number:integer '}' <Sorabji::ObjectIdentifierNode>
   end
@@ -7,4 +19,7 @@ grammar Sorabji
     [0-9]+ <Sorabji::IntegerLiteralNode>
   end
 
+  rule identifier
+    [a-z_] <Sorabji::Identifier>
+  end
 end

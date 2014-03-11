@@ -14,13 +14,23 @@ describe Sorabji::Parser do
   describe 'simple expressions' do
     specify "parsing an integer" do
       parse_tree = parse['123']
-      parse_tree.to_ast.must_equal Sorabji::IntegerLiteral.new(123)
+      parse_tree.to_ast.must_equal [Sorabji::IntegerLiteral.new(123)]
+    end
+
+    specify "object identifier" do
+      parse_tree = parse['{123}']
+      parse_tree.to_ast.must_equal [Sorabji::ObjectIdentifier.new(123)]
     end
 
     specify "identifier" do
-      parse_tree = parse['{123}']
-      parse_tree.to_ast.must_equal Sorabji::ObjectIdentifier.new(123)
+      parse_tree = parse['external_id']
+      puts parse_tree.inspect
+      parse_tree.to_ast.must_equal Sorabji::Identifier.new(:external_id)
     end
 
+    specify "object symbol ident" do
+      parse_tree = parse['{external_id}']
+      parse_tree.to_ast.must_equal Sorabji::ObjectSymbolIdentifier.new(:external_id)
+    end
   end
 end

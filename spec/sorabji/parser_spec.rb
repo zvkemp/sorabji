@@ -22,7 +22,8 @@ describe Sorabji::Parser do
 
     specify "identifier" do
       parse_tree = parse 'external_id'
-      parse_tree.to_ast.must_equal [Sorabji::Identifier.new(:external_id)]
+      # not a valid script
+      ->{ parse_tree.to_ast }.must_raise NoMethodError
     end
 
     specify "object symbol ident" do
@@ -38,7 +39,7 @@ describe Sorabji::Parser do
     ['+', '-', '/', '*'].each do |operator|
       specify "operator #{operator}" do
         parse_tree = parse operator 
-        parse_tree.to_ast.must_equal [Sorabji::Operator.new(operator.to_sym)]
+        -> { parse_tree.to_ast }.must_raise NoMethodError
       end
     end
 
@@ -114,6 +115,11 @@ describe Sorabji::Parser do
       ast = parse("(123 + 456)").to_ast[0]
       ast.to_proc.call(object).must_equal (123 + 456)
     end
+
+    specify "subtraction operation order is left-right" do
+      ast = parse("123 - 456 - 789").to_ast[0]
+      ast.to_proc.call(object).must_equal -1122
+    end
   end
 
   describe 'to_proc' do
@@ -142,8 +148,8 @@ describe Sorabji::Parser do
     end
 
     specify "identifier" do
-      ast = parse('external_id').to_ast[0]
-      ast.to_proc.call(:anything, :at, :all).must_equal :external_id
+      ast = parse('external_id')
+      -> { ast.to_ast[0].to_proc.call(:anything, :at, :all) }.must_raise NoMethodError
     end
 
     specify "reference object identifier" do

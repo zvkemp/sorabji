@@ -112,7 +112,7 @@ module Sorabji
 
   class OperatorNode < ASTNode
     def to_ast
-      Operator.new(text_value.to_sym)
+      Operator.new(text_value.strip.to_sym)
     end
   end
 

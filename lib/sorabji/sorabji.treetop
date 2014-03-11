@@ -1,6 +1,6 @@
 grammar Sorabji
   rule statement
-    entity* <Sorabji::StatementNode>
+    (operation / value_entity)* <Sorabji::StatementNode>
   end
 
   rule entity
@@ -10,9 +10,9 @@ grammar Sorabji
   rule value_entity
     ( brackets / reference_object_identifier / object_identifier / integer )
   end
-
+  
   rule operation
-    left:value_entity space* operator:operator space* right:(operation / value_entity) <Sorabji::OperationNode>
+    left:value_entity operator:operator right:(operation / value_entity) <Sorabji::OperationNode>
   end
 
   rule reference_object_identifier
@@ -36,7 +36,7 @@ grammar Sorabji
   end
 
   rule operator
-    [+-/*] <Sorabji::OperatorNode>
+    space* [+-/*] space* <Sorabji::OperatorNode>
   end
 
   rule space

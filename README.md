@@ -1,6 +1,6 @@
 # Sorabji
 
-TODO: Write a gem description
+This is an early-stage DSL for accepting user input in a Rails app. Goals are to provide a simple syntax for non-developer users to transform hashes or hash-like entities (like Mongoid documents), and sandboxing user scripts to protect the app and server.
 
 ## Installation
 

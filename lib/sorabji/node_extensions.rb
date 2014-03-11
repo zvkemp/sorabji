@@ -1,10 +1,14 @@
 require 'treetop'
+
 module Sorabji
   class ASTNode < Treetop::Runtime::SyntaxNode; end
 
   class StatementNode < ASTNode
     def to_ast
-      elements.map(&:to_ast)
+      elements.map do |e|
+        puts e.inspect
+        e.to_ast
+      end
     end
   end
   
@@ -37,7 +41,7 @@ module Sorabji
 
 
 
-  class IdentiferNode < ASTNode
+  class IdentifierNode < ASTNode
     def to_ast
       Identifier.new(text_value.to_sym)
     end

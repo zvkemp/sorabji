@@ -25,12 +25,13 @@ describe Sorabji::Parser do
     specify "identifier" do
       parse_tree = parse['external_id']
       puts parse_tree.inspect
-      parse_tree.to_ast.must_equal Sorabji::Identifier.new(:external_id)
+      parse_tree.to_ast.must_equal [Sorabji::Identifier.new(:external_id)]
     end
 
     specify "object symbol ident" do
       parse_tree = parse['{external_id}']
-      parse_tree.to_ast.must_equal Sorabji::ObjectSymbolIdentifier.new(:external_id)
+      parse_tree.to_ast.must_equal [Sorabji::ObjectIdentifier.new(:external_id)]
+
     end
   end
 end

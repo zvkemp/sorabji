@@ -12,6 +12,6 @@ grammar Sorabji
   end
 
   rule identifier
-    [a-z_] <Sorabji::Identifier>
+    [a-z_]+ <Sorabji::IdentifierNode>
   end
 end

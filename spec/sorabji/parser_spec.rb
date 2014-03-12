@@ -205,6 +205,12 @@ describe Sorabji::Parser do
         ast = parsed.to_ast[0]
         ast.to_proc.call({ 276 => 2 }).must_equal [123, 20]
       end
+
+      specify "nested" do
+        parsed = parse('[123 [456 789]]')
+        ast = parsed.to_ast[0]
+        ast.to_proc.call({}).must_equal [123, [456, 789]]
+      end
     end
   end
 

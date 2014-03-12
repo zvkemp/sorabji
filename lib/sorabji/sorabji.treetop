@@ -35,16 +35,12 @@ grammar Sorabji
     '(' content:( entity / operation ) ')' <Sorabji::BracketedNode>
   end
 
-  # rule list
-    #lsq_bracket ((expression space+)* expression*) rsq_bracket <Sorabji::ListNode>
-  #end
-
   rule list
     '[' values:ary_expression* ']' <Sorabji::ListNode>
   end
 
   rule ary_expression
-    space* value_entity 
+    space* expression
   end
 
   rule integer

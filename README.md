@@ -28,6 +28,16 @@ Or install it yourself as:
   - TODO: implement messaging whitelist
   - TODO: define how reference objects are looked up
 
+- Lists
+  - square bracket delineated, space-separated values
+  - eg `[123 456 {276} (1 + {{year}})]`
+  - proc conversion evaluates based on current object.
+    - for `{ 276 => 1 }` and `#<Obj: @year=2014>`, proc evaluates to Ruby array `[123, 456, 1, 2015]`
+
+- Functions
+  - `default`: returns the first present argument:
+  - `default[{276} 101]` returns 101 unless `{276}` is defined.
+
 ## Todo
 
 - how to handle integer division cleanly, without violating the expectations of non-developers (i.e. convert to float by default?)?

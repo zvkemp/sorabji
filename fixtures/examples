@@ -10,6 +10,7 @@ r[1632] || r[1626] || r[1625] #=> uses `default[{1632} {1626} {1625}]`
 (r[270].to_i < 100 ? 1900 + r[270].to_i : r[270].to_i) if r[270].present?
 r.external_id > 1526374 ? 2 : 1
 
+(r[2465] and r[2465].include?(1)) ? 1 : 2
 untested:
 
 r[:date] = Time.strptime("#{r[2280]} #{r[2281]}", "%A, %B %d, %Y %l:%M %p")
@@ -27,7 +28,6 @@ ary = r.attributes.values_at(*%w(1353 1354 1355 1356 1357 1358 1359 1360)).compa
 ary = r.attributes.values_at(*%w(1173 1174 1175 1176 1177)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count).round(0) rescue nil
 ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count).round(0) rescue nil
 [1424,1425,1426,1427,1428,1429].inject(0) {|sum, id| sum + r[id].to_i }
-(r[2465] and r[2465].include?(1)) ? 1 : 2
 
 
 

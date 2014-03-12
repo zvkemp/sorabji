@@ -34,9 +34,19 @@ Or install it yourself as:
   - proc conversion evaluates based on current object.
     - for `{ 276 => 1 }` and `#<Obj: @year=2014>`, proc evaluates to Ruby array `[123, 456, 1, 2015]`
 
-- Functions
-  - `default`: returns the first present argument:
-  - `default[{276} 101]` returns 101 unless `{276}` is defined.
+### Functions
+
+  `default`: returns the first present argument:
+  `default[{276} 101]` returns 101 unless `{276}` is defined.
+
+  `if[condition true false]`: ternary operator
+
+  `included?[value other]`: returns true if `other` equals `value` or other is an array containing `value`. `other` can be a value entity or a list.
+
+  `mean[a b c]`: returns a float-coerced mean of the given arguments
+
+
+
 
 ## Todo
 

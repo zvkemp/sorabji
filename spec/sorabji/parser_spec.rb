@@ -233,20 +233,31 @@ describe Sorabji::Parser do
       let(:args){'[{276} ({276} + 1) 1000]' }
       let(:expression){ "if#{args}" }
 
-      specify "it is parsed correctly" do
-        ast = parse("default#{args}").to_ast[0]
-        function = ast.to_proc
-        function.call({ 276 => 7 }).must_equal 7
-      end
-
       specify "it works like a ternary operator" do
         ast = parse(expression).to_ast[0]
         function = ast.to_proc
         function.call({ 276 => 7 }).must_equal 8
         function.call({ }).must_equal 1000
+        function.call({ 276 => false }).must_equal 1000
       end
     end
 
+    describe "nested functions" do
+      let(:ref){ OpenStruct.new(year: 2014) }
+
+      let(:expression){ %{default[{101} {102} if[{276} ({{year}} - {276}) {{year}}]]} }
+      let(:function){ parse(expression).to_ast[0].to_proc }
+      [
+        [{ }, 2014],
+        [{ 276 => 10 }, 2004],
+        [{ 102 => 11 }, 11]
+      ].each do |obj, exp|
+        specify do
+          stub(obj).reference_object { ref }
+          function.call(obj).must_equal exp
+        end
+      end
+    end
   end
 
   describe 'dashboard examples' do

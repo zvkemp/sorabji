@@ -20,7 +20,7 @@ grammar Sorabji
   end
   
   rule operation
-    left:value_entity operator:operator right:expression <Sorabji::OperationNode>
+    left:value_entity operator:(operator / comparator) right:expression <Sorabji::OperationNode>
   end
 
   rule reference_object_identifier
@@ -112,7 +112,7 @@ grammar Sorabji
   end
 
   rule operator
-    space* (addition_op / subtraction_op / multiplication_op / division_op) space* <Sorabji::OperatorNode>
+    space* (addition_op / subtraction_op / multiplication_op / division_op / comparator) space* <Sorabji::OperatorNode>
   end
 
   rule addition_op

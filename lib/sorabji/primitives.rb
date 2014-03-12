@@ -21,6 +21,15 @@ module Sorabji
     end
   end
 
+  class StringLiteralNode < ASTNode
+    def to_ast
+      StringLiteral.new(content.text_value)
+    end
+  end
+
+  class StringLiteral < Struct.new(:value)
+  end
+
   class ObjectIdentifierNode < ASTNode
     def to_ast
       ObjectIdentifier.new(ident.to_ast.value)

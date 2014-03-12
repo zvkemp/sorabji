@@ -6,14 +6,20 @@ year - r[185]
 r[1793]*r[1417]
 r[1424]/r[1423]
 r[1632] || r[1626] || r[1625] #=> uses `default[{1632} {1626} {1625}]`
+(rx = r[2103] ? r[2103] : (100 + r[2102]))
 
 untested:
 
+# Is this one necessary? Just to keep the dataset clean, or what?
 r[1487].blank? ? nil : r[1487]
-(rx = r[2103] ? r[2103] : (100 + r[2102]))
+
 
 r[2008].to_s.gsub(%Q{%},%Q{}).to_i
+
+# Hmm...coding an uncoded question? Use a case statement?
 Question.find(2102).labels_hash[r[2102]]
+
+
 r[:date] = Time.strptime("#{r[2280]} #{r[2281]}", "%A, %B %d, %Y %l:%M %p")
 
 r.external_id.to_s['1460465'] ? 1 : 2

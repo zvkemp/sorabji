@@ -20,6 +20,11 @@ describe Sorabji::Parser do
       parse_tree.to_ast.must_equal [Sorabji::ObjectIdentifier.new(123)]
     end
 
+    specify "string" do
+      parse_tree = parse '"hello"'
+      parse_tree.to_ast.must_equal [Sorabji::StringLiteral.new("hello")]
+    end
+
     specify "identifier" do
       parse_tree = parse 'external_id'
       # not a valid script
@@ -239,6 +244,17 @@ describe Sorabji::Parser do
         function.call({ 276 => 7 }).must_equal 8
         function.call({ }).must_equal 1000
         function.call({ 276 => false }).must_equal 1000
+      end
+    end
+
+    describe "mean" do
+      let(:expression){ "mean[{101} {102} 10 {103}]" }
+      let(:function){ parse(expression).to_ast[0].to_proc }
+      
+      it "ignores missing values" do
+        function.call({}).must_equal 10
+        function.call({ 102 => 20 }).must_equal 15.0
+        function.call({ 101 => 1, 102 => 2, 103 => 3 }).must_equal 4
       end
     end
 

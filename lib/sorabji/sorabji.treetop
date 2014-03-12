@@ -16,7 +16,7 @@ grammar Sorabji
   rule value_entity
     # Any entity that can be reduced to a primitive value without ambiguous precedence.
     # `brackets` can enclose an operation to make it act as a value entity.
-    ( brackets / reference_object_identifier / object_identifier / integer / function )
+    ( brackets / reference_object_identifier / object_identifier / integer / function / string )
   end
   
   rule operation
@@ -36,7 +36,7 @@ grammar Sorabji
   end
 
   rule function
-    ( function_default / function_ternary )
+    ( function_default / function_ternary / function_mean )
   end
 
   rule function_default
@@ -45,6 +45,10 @@ grammar Sorabji
 
   rule function_ternary
     "if" args:list <Sorabji::FunctionTernaryNode>
+  end
+
+  rule function_mean
+    "mean" args:list <Sorabji::FunctionMeanNode>
   end
 
   rule list
@@ -57,6 +61,14 @@ grammar Sorabji
 
   rule integer
     [0-9]+ <Sorabji::IntegerLiteralNode>
+  end
+
+  rule string
+    ( dq_string )
+  end
+
+  rule dq_string
+    '"' content:(('\"' / !'"' .)*) '"' <Sorabji::StringLiteralNode>
   end
 
   rule identifier

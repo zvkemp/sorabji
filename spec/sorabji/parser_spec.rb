@@ -246,7 +246,7 @@ describe Sorabji::Parser do
       ["5369", "5369", 5369],
       ["r[276] * r[280]", "{276} * {280}", 20],
       ["r[276] / r[280]", "{276} / {280}", 1.25],
-      ["r[101] || r[102] || r[103]", "detect({101}, {102}, {103})", 2]
+      ["r[101] || r[102] || r[103]", "default[{101} {102} {103}]", 2]
     ].each do |old_style, new_style, expectation|
       specify(old_style) do
         ast = parse(new_style).to_ast[0]

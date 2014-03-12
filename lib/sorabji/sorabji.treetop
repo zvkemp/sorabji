@@ -36,19 +36,23 @@ grammar Sorabji
   end
 
   rule function
-    ( function_default / function_ternary / function_mean )
+    ( f_default / f_ternary / f_mean / f_included )
   end
 
-  rule function_default
+  rule f_default
     "default" args:list <Sorabji::FunctionDefaultNode>
   end
 
-  rule function_ternary
+  rule f_ternary
     "if" args:list <Sorabji::FunctionTernaryNode>
   end
 
-  rule function_mean
+  rule f_mean
     "mean" args:list <Sorabji::FunctionMeanNode>
+  end
+
+  rule f_included
+    "included?" args:list <Sorabji::FunctionIncludedNode>
   end
 
   rule list

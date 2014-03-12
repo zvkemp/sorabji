@@ -319,13 +319,34 @@ describe Sorabji::Parser do
         end
       end
     end
+
+    describe "included?" do
+      [
+        [ %<included?[10 {276}]>, { 276 => 10 }, true, 'single value match' ],
+        [ %<included?[10 {276}]>, { 276 => 9 }, false, 'single value no match' ],
+        [ %<included?[10 {276}]>, {}, false, 'no values present'], 
+        [ %<included?[10 {276}]>, { 276 => [1, 2, 3]}, false, 'array values, exp not present'],
+        [ %<included?[10 {276}]>, { 276 => [8, 9, 10, 11]}, true, 'array values, exp present'],
+        [ %<included?[10 {276}]>, { 276 => "hello"}, false, 'string format'],
+        [ %<included?[10 [8 9 10 11]]>, {}, true, 'literal list'],
+        [ %<included?[10 [{276} 9 8 7]]>, { 276 => 10 }, true, 'list interpolation']
+      ].each do |example, object, expectation, desc|
+        specify "included (#{desc})" do
+          function = parse(example).to_ast[0].to_proc
+          function.call(object).must_equal expectation
+        end
+      end
+    end
   end
 
   describe 'dashboard examples' do
     let(:obj){{
       276 => 5,
       280 => 4,
-      103 => 2
+      103 => 2,
+      2102 => 17,
+      270 => 101,
+      external_id: 1526375
     }}
 
     let(:reference){ OpenStruct.new(year: 2013) }
@@ -339,7 +360,11 @@ describe Sorabji::Parser do
       ["5369", "5369", 5369],
       ["r[276] * r[280]", "{276} * {280}", 20],
       ["r[276] / r[280]", "{276} / {280}", 1.25],
-      ["r[101] || r[102] || r[103]", "default[{101} {102} {103}]", 2]
+      ["r[101] || r[102] || r[103]", "default[{101} {102} {103}]", 2],
+      ["r[2103] ? r[2103] : (100 + r[2102])", "if[{2103} {2103} (100 + {2102})]", 117],
+      ['r[270] < 100 ? 1900 + r[270] : r[270]', 'if[({270} > 100) (1900 + {270}) {270}]', 2001],
+      ['r.external_id > 1526374 ? 2 : 1', 'if[({external_id} > 1526374) "big" "small"]', 'big'],
+      [' (r[2465] and r[2465].include?(1)) ? 1 : 2', 'if[included?[1 {2465}] 1 2]', 2]
     ].each do |old_style, new_style, expectation|
       specify(old_style) do
         ast = parse(new_style).to_ast[0]

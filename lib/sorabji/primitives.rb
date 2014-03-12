@@ -28,6 +28,9 @@ module Sorabji
   end
 
   class StringLiteral < Struct.new(:value)
+    def to_proc
+      ->(*args){ value }
+    end
   end
 
   class ObjectIdentifierNode < ASTNode

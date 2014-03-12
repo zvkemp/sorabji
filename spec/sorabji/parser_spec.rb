@@ -178,6 +178,12 @@ describe Sorabji::Parser do
       ast.to_proc.call(object).must_equal :hello
     end
 
+    specify "strings" do
+      str = "hello, world. default[11 12 13] will only be a string"
+      ast = parse("#{str.inspect}").to_ast[0]
+      ast.to_proc.call.must_equal str
+    end
+
 
     describe 'lists' do
       specify 'empty list' do
@@ -219,6 +225,19 @@ describe Sorabji::Parser do
     end
   end
 
+  describe "booleans" do
+    specify "true" do
+      parse('true').to_ast[0].to_proc.call({}).must_equal true
+    end
+
+    specify "false" do
+      parse('false').to_ast[0].to_proc.call({}).must_equal false
+    end
+  end
+
+  describe "comparisons" do
+  end
+
   describe "named functions" do
     describe "default" do
       let(:expression){ "default[{276} {275} 101]" }
@@ -244,6 +263,16 @@ describe Sorabji::Parser do
         function.call({ 276 => 7 }).must_equal 8
         function.call({ }).must_equal 1000
         function.call({ 276 => false }).must_equal 1000
+      end
+
+      specify "boolean false" do
+        function = parse("if[false 1 0]").to_ast[0].to_proc
+        function.call({}).must_equal 0
+      end
+
+      specify "boolean true" do
+        function = parse("if[true 1 0]").to_ast[0].to_proc
+        function.call({}).must_equal 1
       end
     end
 

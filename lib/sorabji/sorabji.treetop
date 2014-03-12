@@ -16,7 +16,7 @@ grammar Sorabji
   rule value_entity
     # Any entity that can be reduced to a primitive value without ambiguous precedence.
     # `brackets` can enclose an operation to make it act as a value entity.
-    ( brackets / reference_object_identifier / object_identifier / integer / function / string )
+    ( brackets / reference_object_identifier / object_identifier / integer / function / string / boolean )
   end
   
   rule operation
@@ -71,8 +71,44 @@ grammar Sorabji
     '"' content:(('\"' / !'"' .)*) '"' <Sorabji::StringLiteralNode>
   end
 
+  rule boolean
+    (bool_true / bool_false)
+  end
+
+  rule bool_true
+    "true" <Sorabji::BooleanTrueNode>
+  end
+
+  rule bool_false
+    "false" <Sorabji::BooleanFalseNode>
+  end
+
   rule identifier
     [a-z_]+ <Sorabji::IdentifierNode>
+  end
+
+  rule comparator
+    (greater_than_or_equal_to_comp / less_than_or_equal_to_comp / greater_than_comp / less_than_comp / equal_to_comp)
+  end
+
+  rule greater_than_or_equal_to_comp
+    '>='
+  end
+
+  rule less_than_or_equal_to_comp
+    '<='
+  end
+
+  rule greater_than_comp
+    '>'
+  end
+
+  rule less_than_comp
+    '<'
+  end
+
+  rule equal_to_comp
+    '=='
   end
 
   rule operator
@@ -98,4 +134,5 @@ grammar Sorabji
   rule space
     [\s]+
   end
+
 end

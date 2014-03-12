@@ -48,13 +48,6 @@ module Sorabji
   end
 
 
-  class SqBracketNode < ASTNode
-    def to_ast
-      nil
-    end
-  end
-
-
   class Operation < Struct.new(:left, :right, :operator)
     # send should be safe; operators are limited by the operator grammar rule.
     def to_proc

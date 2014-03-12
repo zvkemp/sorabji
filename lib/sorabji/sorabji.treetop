@@ -47,15 +47,6 @@ grammar Sorabji
     space* value_entity 
   end
 
-
-  rule lsq_bracket
-    '[' <Sorabji::SqBracketNode>
-  end
-
-  rule rsq_bracket
-    ']' <Sorabji::SqBracketNode>
-  end
-
   rule integer
     [0-9]+ <Sorabji::IntegerLiteralNode>
   end

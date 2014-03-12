@@ -1,13 +1,17 @@
 require 'treetop'
 
 module Sorabji
+  class Treetop::Runtime::SyntaxNode
+    def to_ast
+      nil
+    end
+  end
+
   class ASTNode < Treetop::Runtime::SyntaxNode; end
 
   class StatementNode < ASTNode
     def to_ast
-      elements.map do |e|
-        e.to_ast
-      end
+      elements.map(&:to_ast)
     end
   end
 
@@ -28,6 +32,28 @@ module Sorabji
       Operation.new(left.to_ast, right.to_ast, operator.to_ast)
     end
   end
+  
+  class ListNode < ASTNode
+    def to_ast
+      List.new(values.elements.map do |e|
+        e.elements.map(&:to_ast)
+      end.flatten.compact)
+    end
+  end
+
+  class List < Struct.new(:elements)
+    def to_proc
+      -> (r) { elements.map {|e| e.to_proc.call(r) } }
+    end
+  end
+
+
+  class SqBracketNode < ASTNode
+    def to_ast
+      nil
+    end
+  end
+
 
   class Operation < Struct.new(:left, :right, :operator)
     # send should be safe; operators are limited by the operator grammar rule.
@@ -40,7 +66,7 @@ module Sorabji
     end
 
     def inspect
-      "{ #{left.inspect} #{operator.value} #{right.inspect} }"
+      "<Operation::{ #{left.inspect} #{operator.value} #{right.inspect} }>"
     end
 
     private

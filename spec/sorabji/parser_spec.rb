@@ -172,12 +172,60 @@ describe Sorabji::Parser do
       ast = parse('({123})').to_ast[0]
       ast.to_proc.call(object).must_equal :hello
     end
+
+
+    describe 'lists' do
+      specify 'empty list' do
+        parsed = parse('[]')
+        ast = parsed.to_ast[0]
+        ast.must_be_instance_of Sorabji::List
+        ast.must_equal Sorabji::List.new([])
+      end
+
+      specify 'one element' do
+        parsed = parse '[123]'
+        ast = parsed.to_ast[0]
+        ast.must_equal Sorabji::List.new([Sorabji::IntegerLiteral.new(123)])
+      end
+
+      specify "multiple elements" do
+        parsed = parse('[123 456 789]')
+        ast = parsed.to_ast[0]
+        ast.to_proc.call({}).must_equal [123, 456, 789]
+      end
+
+      specify "with lookups" do
+        parsed = parse('[123 456 {276}]')
+        ast = parsed.to_ast[0]
+        ast.to_proc.call({ 276 => 2 }).must_equal [123, 456, 2]
+      end
+
+      specify "with operations" do
+        parsed = parse('[123 ({276} * 10)]')
+        ast = parsed.to_ast[0]
+        ast.to_proc.call({ 276 => 2 }).must_equal [123, 20]
+      end
+    end
+  end
+
+  describe "named functions" do
+    describe "default" do
+      let(:expression){ "default[{276} {275} 101]" }
+
+      specify "returns the first present value in the arguments list" do
+        ast = parse(expression).to_ast[0]
+        function = ast.to_proc
+        function.call({ 101 => 2 }).must_equal 101
+        function.call({ 275 => 15 }).must_equal 15
+      end
+    end
   end
 
   describe 'dashboard examples' do
     let(:obj){{
       276 => 5,
-      280 => 4
+      280 => 4,
+      103 => 2
     }}
 
     let(:reference){ OpenStruct.new(year: 2013) }
@@ -190,7 +238,8 @@ describe Sorabji::Parser do
       ["year - r[276]", "{{year}} - {276}", 2008],
       ["5369", "5369", 5369],
       ["r[276] * r[280]", "{276} * {280}", 20],
-      ["r[276] / r[280]", "{276} / {280}", 1.25]
+      ["r[276] / r[280]", "{276} / {280}", 1.25],
+      ["r[101] || r[102] || r[103]", "detect({101}, {102}, {103})", 2]
     ].each do |old_style, new_style, expectation|
       specify(old_style) do
         ast = parse(new_style).to_ast[0]

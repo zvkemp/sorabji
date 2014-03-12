@@ -5,7 +5,7 @@ grammar Sorabji
   end
 
   rule expression
-    (operation / value_entity)
+    ( list / operation / value_entity )
   end
 
   rule entity
@@ -35,6 +35,27 @@ grammar Sorabji
     '(' content:( entity / operation ) ')' <Sorabji::BracketedNode>
   end
 
+  # rule list
+    #lsq_bracket ((expression space+)* expression*) rsq_bracket <Sorabji::ListNode>
+  #end
+
+  rule list
+    '[' values:ary_expression* ']' <Sorabji::ListNode>
+  end
+
+  rule ary_expression
+    space* value_entity 
+  end
+
+
+  rule lsq_bracket
+    '[' <Sorabji::SqBracketNode>
+  end
+
+  rule rsq_bracket
+    ']' <Sorabji::SqBracketNode>
+  end
+
   rule integer
     [0-9]+ <Sorabji::IntegerLiteralNode>
   end
@@ -44,7 +65,23 @@ grammar Sorabji
   end
 
   rule operator
-    space* [+-/*] space* <Sorabji::OperatorNode>
+    space* (addition_op / subtraction_op / multiplication_op / division_op) space* <Sorabji::OperatorNode>
+  end
+
+  rule addition_op
+    "+"
+  end
+
+  rule subtraction_op
+    "-"
+  end
+
+  rule multiplication_op
+    "*"
+  end
+
+  rule division_op
+    "/"
   end
 
   rule space

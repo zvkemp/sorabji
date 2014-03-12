@@ -36,11 +36,15 @@ grammar Sorabji
   end
 
   rule function
-    ( function_default )
+    ( function_default / function_ternary )
   end
 
   rule function_default
     "default" args:list <Sorabji::FunctionDefaultNode>
+  end
+
+  rule function_ternary
+    "if" args:list <Sorabji::FunctionTernaryNode>
   end
 
   rule list

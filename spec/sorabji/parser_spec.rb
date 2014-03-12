@@ -226,6 +226,27 @@ describe Sorabji::Parser do
         function.call({ 276 => 3 }).must_equal 3
       end
     end
+
+    describe "ternary" do
+      # should implement boolean expressions, comparisons
+      #
+      let(:args){'[{276} ({276} + 1) 1000]' }
+      let(:expression){ "if#{args}" }
+
+      specify "it is parsed correctly" do
+        ast = parse("default#{args}").to_ast[0]
+        function = ast.to_proc
+        function.call({ 276 => 7 }).must_equal 7
+      end
+
+      specify "it works like a ternary operator" do
+        ast = parse(expression).to_ast[0]
+        function = ast.to_proc
+        function.call({ 276 => 7 }).must_equal 8
+        function.call({ }).must_equal 1000
+      end
+    end
+
   end
 
   describe 'dashboard examples' do

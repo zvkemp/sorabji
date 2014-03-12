@@ -50,33 +50,33 @@ describe Sorabji::Parser do
   end
 
   describe "basic mathematical expressions" do
-    let(:exp_left){ Sorabji::IntegerLiteral.new(123) }
-    let(:exp_right){ Sorabji::IntegerLiteral.new(456) }
+    let(:exp_left){ Sorabji::IntegerLiteral.new(125) }
+    let(:exp_right){ Sorabji::IntegerLiteral.new(500) }
     let(:object){{
-      1 => 123,
-      2 => 456
+      1 => 125,
+      2 => 500
     }}
 
     let(:expectations){{
       "+" => { 
         expression: Sorabji::Operation.new(exp_left, exp_right, Sorabji::Operator.new(:+)),
-        result: 579
+        result: 625
       }, "*" => { 
         expression: Sorabji::Operation.new(exp_left, exp_right, Sorabji::Operator.new(:*)),
-        result: 56088
+        result: 62500
       }, "/" => { 
         expression: Sorabji::Operation.new(exp_left, exp_right, Sorabji::Operator.new(:/)),
-        result: 0
+        result: 0.25
       }, "-" => { 
         expression: Sorabji::Operation.new(exp_left, exp_right, Sorabji::Operator.new(:-)),
-        result: -333
+        result: -375
       }
     }}
 
     ['+', '*', '/', '-'].each do |operator|
-      ["123#{operator}456",
-       "123 #{operator}456",
-       "123 #{operator} 456"].each do |example|
+      ["125#{operator}500",
+       "125 #{operator}500",
+       "125 #{operator} 500"].each do |example|
         specify "operation <#{example}>" do
           ast = parse(example).to_ast[0]
           ast.must_equal expectations[operator][:expression]
@@ -88,7 +88,7 @@ describe Sorabji::Parser do
         end
       end
 
-      ["{1} #{operator} 456", "123 #{operator} {2}"].each do |example|
+      ["{1} #{operator} 500", "125 #{operator} {2}"].each do |example|
         specify "operation with lookup <#{example}>" do
           ast = parse(example).to_ast[0]
           ast.to_proc.call(object).must_equal expectations[operator][:result]
@@ -97,18 +97,18 @@ describe Sorabji::Parser do
     end
 
     specify "compound addition" do
-      ast = parse("123 + {2} + 10").to_ast[0]
-      ast.to_proc.call(object).must_equal 589
+      ast = parse("125 + {2} + 10").to_ast[0]
+      ast.to_proc.call(object).must_equal 635
     end
 
     specify "a nested operation" do
-      ast = parse("123 + 456 * {2}").to_ast[0]
-      ast.to_proc.call(object).must_equal 207936 + 123
+      ast = parse("125 + 500 * {2}").to_ast[0]
+      ast.to_proc.call(object).must_equal 125 + 500 * 500
     end
 
     specify "an operation with brackets" do
       ast = parse("(123 + 456) * {1}").to_ast[0]
-      ast.to_proc.call(object).must_equal (123+456)*123
+      ast.to_proc.call(object).must_equal (123+456)*125
     end
 
     specify "an operation in brackets" do
@@ -120,6 +120,16 @@ describe Sorabji::Parser do
       ast = parse("123 - 456 - 789").to_ast[0]
       ast.to_proc.call(object).must_equal -1122
     end
+
+    [
+      ['123-(456-789)', 456],
+      ['(123-456)-789', -1122]
+    ].each do |operation, expectation|
+      specify "subtraction operation with brackets <#{operation}>" do
+        parse(operation).to_ast[0].to_proc.call(object).must_equal expectation
+      end
+    end
+
   end
 
   describe 'to_proc' do
@@ -164,6 +174,28 @@ describe Sorabji::Parser do
     end
   end
 
+  describe 'dashboard examples' do
+    let(:obj){{
+      276 => 5,
+      280 => 4
+    }}
 
+    let(:reference){ OpenStruct.new(year: 2013) }
 
+    before { stub(obj).reference_object { reference } }
+
+    [
+      ["r[276]", "{276}", 5],
+      ["2013 - r[276]", "2013 - {276}", 2008],
+      ["year - r[276]", "{{year}} - {276}", 2008],
+      ["5369", "5369", 5369],
+      ["r[276] * r[280]", "{276} * {280}", 20],
+      ["r[276] / r[280]", "{276} / {280}", 1.25]
+    ].each do |old_style, new_style, expectation|
+      specify(old_style) do
+        ast = parse(new_style).to_ast[0]
+        ast.to_proc.call(obj).must_equal expectation
+      end
+    end
+  end
 end

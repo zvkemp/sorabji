@@ -1,18 +1,26 @@
 grammar Sorabji
+
   rule statement
-    (operation / value_entity)* <Sorabji::StatementNode>
+    expression* <Sorabji::StatementNode>
+  end
+
+  rule expression
+    (operation / value_entity)
   end
 
   rule entity
+    # basically, anything at all.
     ( operation / value_entity / identifier / operator / space )
   end
 
   rule value_entity
+    # Any entity that can be reduced to a primitive value without ambiguous precedence.
+    # `brackets` can enclose an operation to make it act as a value entity.
     ( brackets / reference_object_identifier / object_identifier / integer )
   end
   
   rule operation
-    left:value_entity operator:operator right:(operation / value_entity) <Sorabji::OperationNode>
+    left:value_entity operator:operator right:expression <Sorabji::OperationNode>
   end
 
   rule reference_object_identifier

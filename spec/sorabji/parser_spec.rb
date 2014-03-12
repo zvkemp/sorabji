@@ -223,6 +223,7 @@ describe Sorabji::Parser do
         function = ast.to_proc
         function.call({ 101 => 2 }).must_equal 101
         function.call({ 275 => 15 }).must_equal 15
+        function.call({ 276 => 3 }).must_equal 3
       end
     end
   end

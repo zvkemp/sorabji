@@ -5,7 +5,7 @@ grammar Sorabji
   end
 
   rule expression
-    ( list / operation / value_entity )
+    ( list / operation / value_entity / function )
   end
 
   rule entity
@@ -33,6 +33,14 @@ grammar Sorabji
 
   rule brackets
     '(' content:( entity / operation ) ')' <Sorabji::BracketedNode>
+  end
+
+  rule function
+    ( function_default )
+  end
+
+  rule function_default
+    "default" args:list <Sorabji::FunctionDefaultNode>
   end
 
   rule list

@@ -45,6 +45,14 @@ Or install it yourself as:
 
   `mean[a b c]`: returns a float-coerced mean of the given arguments
 
+  Functions can be called using a object identifier with multiple keys, which is interpreted as a list:
+
+  - `{102 103 104}` is equivalent to [{102} {103} {104}]
+  - sum{102} is equivalent to sum[{102}]
+  - sum{102 103 104} is equivalent to sum[{102} {103} {104}]
+
+  This is **only** applicable to lists whose values all come from identifiers. You cannot mix regular values in an identifier list.
+
 
 
 

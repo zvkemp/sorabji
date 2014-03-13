@@ -371,6 +371,12 @@ describe Sorabji::Parser do
       function = parse("sum{101}").to_ast[0].to_proc
       function.call({ 101 => 1, 102 => 2 }).must_equal 1
     end
+
+    specify "if function called with an ident list" do
+      function = parse("if{101 102 a}").to_ast[0].to_proc
+      function.call({ 101 => true, 102 => 2, :a => 3 }).must_equal 2
+      function.call({ 101 => false, 102 => 2, :a => 3 }).must_equal 3
+    end
   end
 
   describe 'dashboard examples' do

@@ -33,34 +33,6 @@ module Sorabji
     end
   end
 
-  class ObjectIdentifierNode < ASTNode
-    def to_ast
-      ObjectIdentifier.new(ident.to_ast.value)
-    end
-  end
-
-  class ObjectIdentifier < Struct.new(:value)
-    def to_proc
-      ->(r){ r[value] }
-    end
-
-    def inspect
-      "{#{value}}"
-    end
-  end
-
-  class ReferenceObjectIdentifierNode < ASTNode
-    def to_ast
-      ReferenceObjectIdentifier.new(ident.to_ast.value)
-    end
-  end
-
-  class ReferenceObjectIdentifier < Struct.new(:value)
-    def to_proc
-      ->(r){ r.reference_object.send(value) }
-    end
-  end
-
   class IdentifierNode < ASTNode
     def to_ast
       Identifier.new(text_value.to_sym)

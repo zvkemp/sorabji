@@ -337,6 +337,40 @@ describe Sorabji::Parser do
         end
       end
     end
+
+    describe "sum" do
+      [
+        [%<sum[1 2 3]>, {}, 6, 'simple sum'],
+        [%<sum[]>, {}, 0, 'no values given'],
+        [%<sum[{276} {277}]>, { 276 => 10 }, 10, 'nil values present']
+      ].each do |example, object, expectation, desc|
+        specify "sum (#{desc})" do
+          function = parse(example).to_ast[0].to_proc
+          function.call(object).must_equal expectation
+        end
+      end
+    end
+  end
+  
+  describe "identifier list" do
+    # {101 102 103 104 105} would be equivalent to
+    # [{101} {102} {103} {104} {105}]
+    specify "ident list" do
+      function = parse("{101 102 103}").to_ast[0].to_proc
+      function.call({ 101 => 1, 102 => 2 }).must_equal [1, 2, nil]
+    end
+
+    # sum{101 102 103}
+    # sum[{101} {102} {103}]
+    specify "function called with ident list" do
+      function = parse("sum{101 102 103}").to_ast[0].to_proc
+      function.call({ 101 => 1, 102 => 2 }).must_equal 3
+    end
+
+    specify "function called with a single ident" do
+      function = parse("sum{101}").to_ast[0].to_proc
+      function.call({ 101 => 1, 102 => 2 }).must_equal 1
+    end
   end
 
   describe 'dashboard examples' do
@@ -346,7 +380,9 @@ describe Sorabji::Parser do
       103 => 2,
       2102 => 17,
       270 => 101,
-      external_id: 1526375
+      external_id: 1526375,
+      101 => 1,
+      102 => 3
     }}
 
     let(:reference){ OpenStruct.new(year: 2013) }
@@ -354,17 +390,19 @@ describe Sorabji::Parser do
     before { stub(obj).reference_object { reference } }
 
     [
-      ["r[276]", "{276}", 5],
-      ["2013 - r[276]", "2013 - {276}", 2008],
-      ["year - r[276]", "{{year}} - {276}", 2008],
-      ["5369", "5369", 5369],
-      ["r[276] * r[280]", "{276} * {280}", 20],
-      ["r[276] / r[280]", "{276} / {280}", 1.25],
-      ["r[101] || r[102] || r[103]", "default[{101} {102} {103}]", 2],
-      ["r[2103] ? r[2103] : (100 + r[2102])", "if[{2103} {2103} (100 + {2102})]", 117],
-      ['r[270] < 100 ? 1900 + r[270] : r[270]', 'if[({270} > 100) (1900 + {270}) {270}]', 2001],
-      ['r.external_id > 1526374 ? 2 : 1', 'if[({external_id} > 1526374) "big" "small"]', 'big'],
-      [' (r[2465] and r[2465].include?(1)) ? 1 : 2', 'if[included?[1 {2465}] 1 2]', 2]
+      ["r[276]"                                     , "{276}"                                       , 5],
+      ["2013 - r[276]"                              , "2013 - {276}"                                , 2008],
+      ["year - r[276]"                              , "{{year}} - {276}"                            , 2008],
+      ["5369"                                       , "5369"                                        , 5369],
+      ["r[276] * r[280]"                            , "{276} * {280}"                               , 20],
+      ["r[276] / r[280]"                            , "{276} / {280}"                               , 1.25],
+      ["r[101] || r[102] || r[103]"                 , "default[{101} {102} {103}]"                  , 1],
+      ["r[2103] ? r[2103] : (100 + r[2102])"        , "if[{2103} {2103} (100 + {2102})]"            , 117],
+      ['r[270] < 100 ? 1900 + r[270] : r[270]'      , 'if[({270} > 100) (1900 + {270}) {270}]'      , 2001],
+      ['r.external_id > 1526374 ? 2 : 1'            , 'if[({external_id} > 1526374) "big" "small"]' , 'big'],
+      [' (r[2465] and r[2465].include?(1)) ? 1 : 2' , 'if[included?[1 {2465}] 1 2]'                 , 2],
+      ['[101, 102].inject(0){|s,i| s + r[i].to_i'   , 'sum[{101} {102} {103}]'                      , 6]
+
     ].each do |old_style, new_style, expectation|
       specify(old_style) do
         ast = parse(new_style).to_ast[0]

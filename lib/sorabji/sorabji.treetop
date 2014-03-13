@@ -28,7 +28,11 @@ grammar Sorabji
   end
 
   rule object_identifier
-    '{' ident:( identifier / integer ) '}' <Sorabji::ObjectIdentifierNode>
+    '{' ident:object_identifier_element+ '}' <Sorabji::ObjectIdentifierNode>
+  end
+
+  rule object_identifier_element
+    space* ident_e:(identifier / integer)
   end
 
   rule brackets
@@ -36,23 +40,33 @@ grammar Sorabji
   end
 
   rule function
-    ( f_default / f_ternary / f_mean / f_included )
+    ( f_default / f_ternary / f_mean / f_included / f_sum )
+  end
+
+  rule argument_list
+    list
+    /
+    object_identifier
   end
 
   rule f_default
-    "default" args:list <Sorabji::FunctionDefaultNode>
+    "default" args:argument_list <Sorabji::FunctionDefaultNode>
   end
 
   rule f_ternary
-    "if" args:list <Sorabji::FunctionTernaryNode>
+    "if" args:argument_list <Sorabji::FunctionTernaryNode>
   end
 
   rule f_mean
-    "mean" args:list <Sorabji::FunctionMeanNode>
+    "mean" args:argument_list <Sorabji::FunctionMeanNode>
   end
 
   rule f_included
-    "included?" args:list <Sorabji::FunctionIncludedNode>
+    "included?" args:argument_list <Sorabji::FunctionIncludedNode>
+  end
+
+  rule f_sum
+    "sum" args:argument_list <Sorabji::FunctionSumNode>
   end
 
   rule list

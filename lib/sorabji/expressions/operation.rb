@@ -11,17 +11,76 @@ module Sorabji
       end
     end
   end
+
+  class EnsureOperationPrecedence
+    OPERATOR_ORDER = {
+      :* => 1,
+      :/ => 1
+    }
+
+    attr_reader :operand_stack, :operator_stack
+    def initialize(operand_stack, operator_stack)
+      @operand_stack = operand_stack
+      @operator_stack = operator_stack
+    end
+
+    alias_method :operands, :operand_stack
+    alias_method :operators, :operator_stack
+
+    def process
+      new_operands = []
+      new_operators = []
+
+ 
+      new_operands << operands.shift
+      operators.each_with_index do |operator, index|
+        if multiplicative?(operator.value)
+          new_operands << StackOperation.new(operands: [new_operands.pop, operands.shift], operators: [operator])
+        else
+          new_operands << operands.shift
+          new_operators << operator
+        end
+      end
+
+      # new_operands << operand_stack.shift until operand_stack.empty?
+      [new_operands, new_operators]
+
+    end
+
+    private
+
+      def multiplicative?(op)
+        op == :* || op == :/
+      end
+
+  end
   
   class StackOperation
     attr_reader :operand_stack, :operator_stack
-    def initialize
-      @operand_stack = []
-      @operator_stack = []
+    def initialize(options = {})
+      @operand_stack = options.fetch(:operands, [])
+      @operator_stack = options.fetch(:operators, [])
     end
     alias_method :operands, :operand_stack
     alias_method :operators, :operator_stack
 
+    OPERATOR_ORDER = {
+      :* => 1,
+      :/ => 1
+    }
+
+
+    def ==(other)
+      operands == other.operands && operators == other.operators
+    end
+
+    def inspect
+      "<#SB_STACK #{operands.inspect}#{operators.inspect}>"
+    end
+
     def to_proc
+      sort_and_group_operations
+
       ->(r){
         current = next_operand_proc.call(r)
         until operators.empty?
@@ -34,12 +93,22 @@ module Sorabji
     end
     
     private
+      def sort_and_group_operations
+        sorted = operators.sort_by(&method(:operator_order))
+        return if sorted == operators # no sorting necessary
+        @operand_stack, @operator_stack = *EnsureOperationPrecedence.new(operands, operators).process
+      end
+
       def next_operator
         operators.shift.value
       end
 
       def next_operand_proc
         operands.shift.to_proc
+      end
+
+      def operator_order(operator)
+        OPERATOR_ORDER.fetch(operator.value, 2)
       end
   end
 

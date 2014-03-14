@@ -5,5 +5,8 @@ module Sorabji
     end
   end
   class Operator < Struct.new(:value)
+    def inspect
+      "##{value}"
+    end
   end
 end

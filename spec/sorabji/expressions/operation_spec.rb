@@ -74,6 +74,11 @@ describe Sorabji::Operation do
       ast.to_proc.call(object).must_equal -1122
     end
 
+    specify "multiple order-of-ops issues" do
+      ast = parse("123 - 456 * 789 + 1011 * 2").to_ast
+      ast.to_proc.call(object).must_equal (123 - (456 * 789) + (1011 * 2))
+    end
+
     [
       ['123-(456-789)', 456],
       ['(123-456)-789', -1122]

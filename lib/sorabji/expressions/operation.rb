@@ -11,6 +11,7 @@ module Sorabji
       end
     end
   end
+
   class StackOperation
     attr_reader :operand_stack, :operator_stack
     def initialize(options = {})
@@ -101,6 +102,7 @@ module Sorabji
       
   end
 
+# the ol' right associative operation!
 #  class Operation < Struct.new(:left, :right, :operator)
 #    # send should be safe; operators are limited by the operator grammar rule.
 #    def to_proc

@@ -12,6 +12,9 @@ tested:
   (r[2465] and r[2465].include?(1)) ? 1 : 2
   [1424,1425,1426,1427,1428,1429].inject(0) {|sum, id| sum + r[id].to_i }
 
+  # convert single-select to multiple-select
+  Array(r[1604])
+
 untested:
 
 # date parsing
@@ -25,9 +28,6 @@ r.external_id.to_s['1460465'] ? 1 : 2
 
 #concat, check presence
 "#{r[2215]}; #{r[2216]}" if [2215,2216].all? {|id| r[id].present? }
-
-# convert single-select to multiple-select
-Array(r[1604])
 
 # this is trickety: array of values with substitutions for certian values
 (r[1982] || []).map {|v| { 5 => 4, 4 => 5, 7 => 8 }.fetch(v,v)}

@@ -20,7 +20,11 @@ grammar Sorabji
   end
   
   rule operation
-    left:value_entity operator:(operator / comparator) right:expression <Sorabji::OperationNode>
+    left:value_entity op_right:operator_and_right+ <Sorabji::OperationNode>
+  end
+
+  rule operator_and_right
+    operator:(operator / comparator) right:value_entity
   end
 
   rule reference_object_identifier

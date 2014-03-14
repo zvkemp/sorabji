@@ -70,6 +70,7 @@ describe Sorabji::Operation do
     end
 
     specify "subtraction operation order is left-right" do
+      puts "\n\n\n\nSTACK OPERATION"
       ast = parse("123 - 456 - 789").to_ast
       ast.to_proc.call(object).must_equal -1122
     end

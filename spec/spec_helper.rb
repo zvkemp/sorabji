@@ -2,6 +2,8 @@ require 'minitest/autorun'
 require 'minitest/pride'
 
 require 'sorabji'
+require 'ostruct'
+require 'rr'
 
 
 class MiniTest::Spec

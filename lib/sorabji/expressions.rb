@@ -1,6 +1,6 @@
 module Sorabji
-  require 'sorabji/bracketed'
-  require 'sorabji/list'
-  require 'sorabji/operation'
-  require 'sorabji/object_identifier'
+  require 'sorabji/expressions/bracketed'
+  require 'sorabji/expressions/list'
+  require 'sorabji/expressions/operation'
+  require 'sorabji/expressions/object_identifier'
 end

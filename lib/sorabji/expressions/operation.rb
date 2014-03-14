@@ -11,50 +11,6 @@ module Sorabji
       end
     end
   end
-
-  class EnsureOperationPrecedence
-    OPERATOR_ORDER = {
-      :* => 1,
-      :/ => 1
-    }
-
-    attr_reader :operand_stack, :operator_stack
-    def initialize(operand_stack, operator_stack)
-      @operand_stack = operand_stack
-      @operator_stack = operator_stack
-    end
-
-    alias_method :operands, :operand_stack
-    alias_method :operators, :operator_stack
-
-    def process
-      new_operands = []
-      new_operators = []
-
- 
-      new_operands << operands.shift
-      operators.each_with_index do |operator, index|
-        if multiplicative?(operator.value)
-          new_operands << StackOperation.new(operands: [new_operands.pop, operands.shift], operators: [operator])
-        else
-          new_operands << operands.shift
-          new_operators << operator
-        end
-      end
-
-      # new_operands << operand_stack.shift until operand_stack.empty?
-      [new_operands, new_operators]
-
-    end
-
-    private
-
-      def multiplicative?(op)
-        op == :* || op == :/
-      end
-
-  end
-  
   class StackOperation
     attr_reader :operand_stack, :operator_stack
     def initialize(options = {})
@@ -110,6 +66,39 @@ module Sorabji
       def operator_order(operator)
         OPERATOR_ORDER.fetch(operator.value, 2)
       end
+
+      class EnsureOperationPrecedence
+        attr_reader :operand_stack, :operator_stack, :new_operands, :new_operators
+        def initialize(operand_stack, operator_stack)
+          @operand_stack  = operand_stack
+          @operator_stack = operator_stack
+          @new_operands   = []
+          @new_operators  = []
+        end
+
+        alias_method :operands, :operand_stack
+        alias_method :operators, :operator_stack
+
+        def process
+          new_operands << operands.shift
+          operators.each_with_index do |operator, index|
+            if multiplicative?(operator.value)
+              new_operands << StackOperation.new(operands: [new_operands.pop, operands.shift], operators: [operator])
+            else
+              new_operands << operands.shift
+              new_operators << operator
+            end
+          end
+          [new_operands, new_operators]
+        end
+
+        private
+
+          def multiplicative?(op)
+            OPERATOR_ORDER.fetch(op, 2) == 1
+          end
+      end
+      
   end
 
 #  class Operation < Struct.new(:left, :right, :operator)

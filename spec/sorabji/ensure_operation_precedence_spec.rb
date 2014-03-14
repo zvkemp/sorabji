@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe Sorabji::EnsureOperationPrecedence do
+describe Sorabji::StackOperation::EnsureOperationPrecedence do
   let(:sub){ Sorabji::Operator.new(:-) }
   let(:mul){ Sorabji::Operator.new(:*) }
 
@@ -9,7 +9,7 @@ describe Sorabji::EnsureOperationPrecedence do
     original_operators = [sub, mul]
     expected_operands = [1, Sorabji::StackOperation.new(operands: [2, 3], operators: [mul])]
     expected_operators = [sub]
-    op = Sorabji::EnsureOperationPrecedence.new(original_operands, original_operators)
+    op = Sorabji::StackOperation::EnsureOperationPrecedence.new(original_operands, original_operators)
     new_ods, new_ops = *op.process
     new_ops.must_equal expected_operators
     new_ods.must_equal expected_operands

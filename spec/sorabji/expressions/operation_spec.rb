@@ -1,6 +1,6 @@
 require_relative '../../spec_helper'
 
-describe Sorabji::Operation do
+describe Sorabji::StackOperation do
   describe "basic mathematical expressions" do
 
     let(:exp_left){ Sorabji::IntegerLiteral.new(125) }
@@ -11,19 +11,7 @@ describe Sorabji::Operation do
     }}
 
     let(:expectations){{
-      "+" => { 
-        expression: Sorabji::Operation.new(exp_left, exp_right, Sorabji::Operator.new(:+)),
-        result: 625
-      }, "*" => { 
-        expression: Sorabji::Operation.new(exp_left, exp_right, Sorabji::Operator.new(:*)),
-        result: 62500
-      }, "/" => { 
-        expression: Sorabji::Operation.new(exp_left, exp_right, Sorabji::Operator.new(:/)),
-        result: 0.25
-      }, "-" => { 
-        expression: Sorabji::Operation.new(exp_left, exp_right, Sorabji::Operator.new(:-)),
-        result: -375
-      }
+      "+" => { result: 625 }, "*" => { result: 62500 }, "/" => { result: 0.25 }, "-" => { result: -375 }
     }}
 
     ['+', '*', '/', '-'].each do |operator|

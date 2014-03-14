@@ -13,5 +13,6 @@ module Sorabji
   require 'sorabji/primitives/string_literal'
   require 'sorabji/primitives/identifier'
   require 'sorabji/primitives/operator'
+  require 'sorabji/primitives/booleans'
 
 end

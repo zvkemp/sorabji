@@ -30,10 +30,10 @@ describe Sorabji::Operation do
       ["125#{operator}500",
        "125 #{operator}500",
        "125 #{operator} 500"].each do |example|
-        specify "operation <#{example}>" do
-          ast = parse(example).to_ast
-          ast.must_equal expectations[operator][:expression]
-        end
+        #specify "operation <#{example}>" do
+          #ast = parse(example).to_ast
+          #ast.must_equal expectations[operator][:expression]
+        #end
 
         specify "operation to_proc <#{example}>" do
           ast = parse(example).to_ast
@@ -70,7 +70,6 @@ describe Sorabji::Operation do
     end
 
     specify "subtraction operation order is left-right" do
-      puts "\n\n\n\nSTACK OPERATION"
       ast = parse("123 - 456 - 789").to_ast
       ast.to_proc.call(object).must_equal -1122
     end

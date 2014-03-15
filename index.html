@@ -1,76 +1,155 @@
 <!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <title>Sorabji by zvkemp</title>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Sorabji : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Sorabji</title>
   </head>
 
   <body>
-    <div id="container">
-      <div class="inner">
 
-        <header>
-          <h1>Sorabji</h1>
-          <h2></h2>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/zvkemp/sorabji">View on GitHub</a>
+
+          <h1 id="project_title">Sorabji</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/zvkemp/sorabji/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/zvkemp/sorabji/tarball/master">Download this project as a tar.gz file</a>
+            </section>
         </header>
+    </div>
 
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/zvkemp/sorabji/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/zvkemp/sorabji/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/zvkemp/sorabji" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>One of my large projects as an in-house developer for a consulting firm is a managed survey data dashboard. Our consultants prepare data and automated reports for our clients, who access them through our website. We are a small (7 people) office in a niche industry, so I work closely with all of the consultants in improving and updated the administrative portion of the website.</p>
 
-        <hr>
+<p>A big goal of ours was to create a streamlined product that we could process with a standard workflow, even when the underlying data varied considerably. One of the tools I developed fairly early on was a scripting tool that our consultants could use to write macros that perform common or repetitive data transformations. The macros would run automatically when new data was imported from a datafile or API, and the transformations would be essentially self-documenting.</p>
 
-        <section id="main_content">
-          <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+<h3>
+<a name="the-problem" class="anchor" href="#the-problem"><span class="octicon octicon-link"></span></a>The Problem</h3>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>It was Ruby. Not Ruby-like or Ruby-inspired - plain old, eval to a proc on the server Ruby. This is dangerous for numerous obvious reasons, but I was pretty confident that no one in our company would want to maliciously attack the server, and moreover, they wouldn't know how if they did want to.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<p>However, we're starting to license the system to other consulting firms who will act as service providers, so the need to harden this very very soft spot is fairly urgent. Additionally, our consultants have expressed a desire to better understand what the scripts our that I tell them to type in so they can write their own complicated logic, but teaching them the ins and outs of a general purpose programming language is not currently on my list of priorities. They're not developers, but they have a reasonably good understanding of SPSS Syntax and Excel formulae, so I figured I see what I could give them in that vein.</p>
+
+<p>Having recently read Tom Stuart's Understanding Computation, I felt I could make a reasonable stab at developing a simple expression language in a short amount of time, the requirements being:</p>
+
+<ol>
+<li>Single-line expressions only (but nested functions are permitted)</li>
+<li>Must compile to a Ruby proc that takes a hash-like object as an argument (in our specific case, a Mongoid document)</li>
+<li>Evaluation only (the compiled proc would not be allowed to mutate any data - I am handling this within the Rails app)</li>
+<li>Simple enough syntax and a small enough API to learn in 15 - 30 minutes for a non-developer</li>
+<li>Can do everything we have already done in the last 12 months using the Ruby macros.</li>
+</ol><p>I used Treetop to write a grammar specification and implemented the language behind it. I'll go into a bit more detail later on, but first, let's briefly look at the syntax:</p>
+
+<p><strong>A basic list/array</strong>: <code>[1 2 3]</code>. I purposefully decided the value separator should be a single space rather than a comma or some other character, simply because it's one fewer thing for non-programmers to remember.</p>
+
+<p>Here are some syntax examples along with the Ruby code they replaced.</p>
+
+<p><strong>The basic lookup function</strong>: remember, this operates on hash-like objects that implement the square brackets operator (most our data is stored by an id reference to a MySQL table, hence the integer keys).</p>
+
+<p>Old style: <code>r[276]</code>, <code>r[:external_id]</code>
+New style: <code>{276}</code>, <code>{external_id}</code></p>
+
+<p>A series of variables can be looked up as a list like this: <code>{101 102 103 external_id}</code></p>
+
+<p><strong>A reference object lookup</strong>: In the case of our dashboard, each respondent (or 'case' or 'row' depending on what data analysis world you live in) belongs to a dataset, which can provide some default variables or perform calculations or analyses over the entire cohort.</p>
+
+<p>Old style, calculating age: <code>r.survey.date.year - r[276]</code>
+New style: <code>{{year}} - {276}</code></p>
+
+<p><strong>Functions</strong>: there is a very basic set of functions carefully chosen so we could easily re-implement all of our Ruby macros in Sorabji. The syntax is simply a keyword followed by a list (of either <code>[...]</code> or <code>{...}</code> form).</p>
+
+<p><strong>Finding the first present value in a list of possible values, the 'default' function:</strong></p>
+
+<p>Old style: <code>r[101] || r[102] || r[103]</code>
+New style: <code>default{101 102 103}</code></p>
+
+<p>You can mix lookups with integer or other values using the square bracket list:</p>
+
+<p><code>default[{101} 2001]</code>.</p>
+
+<p>This functions similar to Ruby's <code>hash#fetch</code> (<code>{}.fetch(:key, default_value)</code>).</p>
+
+<p><strong>Conditionals are ternary functions</strong>: Another nod to the Excel crowd:</p>
+
+<p>Old style: <code>r[101] &lt; 100 ? 1900 + r[270] : r[270]</code>
+New style: <code>if[({101} &lt; 100) (1900 + {270}) {270}]</code></p>
+
+<p><strong>Any sort of reduce or inject function is much simplified over its Ruby equivalent</strong>:</p>
+
+<pre><code>[101, 102, 103].inject(0) {|sum, x| sum + r[x].to_i }
+# try explaining why that needs to be so complicated
+sum{101 102 103}
+mean[{101} 10 20]
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<h2>
+<a name="implementation" class="anchor" href="#implementation"><span class="octicon octicon-link"></span></a>Implementation</h2>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<p>For the most part, I followed Tom Stuart's example of creating an Abstract Syntax Tree using Ruby structs. Each class would implement a <code>to_proc</code> function that determined how it should evaluate the hash being fed into it. Most classes are very simple. Each abstract class was paired with a corresponding <code>Node</code> class that inherited from <code>Treetop::Runtime::SyntaxNode</code>. I might eventually factor those out, but I found it useful in developing the language to have one set of classes concerned with how the tree is parsed and one concerned with compiling to Ruby procs.</p>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>Here is the Integer Literal class:</p>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<pre><code>class IntegerLiteralNode &lt; ASTNode
+  def to_ast
+    IntegerLiteral.new(text_value.to_i)
+  end
+end
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+class IntegerLiteral &lt; Struct.new(:value)
+  def to_proc
+    -&gt;(*args){ value }
+  end
+end
+</code></pre>
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<p>Obviously, the functional representation of an integer value should only ever return the integer value, so the proc is exceedingly simple. The corresponding grammar:</p>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<pre><code>rule integer
+  [0-9]+ &lt;Sorabji::IntegerLiteralNode&gt;
+end
+</code></pre>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<p>Yay! I should point out that I have never done this before, and went to school for an entirely unrelated subject, so excuse me while I find it incredibly cool that I can feed in a string like <code>'9'</code> to a parser and have it evaluate to a Ruby integer without using the built-in <code>eval</code>.</p>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-        </section>
+<p>Similarly simple primitives like booleans, strings, operators, comparators, etc. have very similar implementations. I'm not going to go through every grammar rule step-by-step here, but the entire specification is available in the repo.</p>
 
-        <footer>
-          Sorabji is maintained by <a href="https://github.com/zvkemp">zvkemp</a><br>
-          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
+<p>Fast forward a dozen or so commits. I decided that most of my grammar rules fall into one of three categories: entities (anything at all, really), value entities (entities which, when evaluated as a proc, return a single value), and operations.</p>
 
-        
-      </div>
+<p>Value Entities include:</p>
+
+<p>-bracketed expressions
+  -reference object lookups (<code>{{year}}</code>)
+  -object lookups (<code>{276}</code>)
+  -integers, strings, and booleans
+  -functions</p>
+
+<p>It took numerous revisions to eventually get to this schema, but once I arrived, I found it was pretty easily extensible. The <em>really</em> interesting part turned out to be mathematical operations, which, due to our weird obsession with infix notation, is WAY less intuitive than I expected.</p>
+
+<p>To be continued...</p>
+      </section>
     </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Sorabji maintained by <a href="https://github.com/zvkemp">zvkemp</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
   </body>
 </html>

@@ -77,7 +77,7 @@ grammar Sorabji
   end
 
   rule f_all
-    "all" args:argument_list <Sorabji::FunctionAllNode>
+    "all?" args:argument_list <Sorabji::FunctionAllNode>
   end
 
   rule f_concat

@@ -18,6 +18,9 @@ tested:
   #concat
   (a = [2736,2737,2738,2739].map {|id| r[id] }.compact.join("; ")).present? ? a : nil
 
+  # Is this one necessary? Just to keep the dataset clean, or what?
+  r[1487].blank? ? nil : r[1487]
+
 untested:
 
 # date parsing
@@ -29,9 +32,6 @@ r[2008].to_s.gsub(%Q{%},%Q{}).to_i
 #string match (could probably be done with greater than)
 r.external_id.to_s['1460465'] ? 1 : 2
 
-#concat, check presence
-"#{r[2215]}; #{r[2216]}" if [2215,2216].all? {|id| r[id].present? }
-
 # this is trickety: array of values with substitutions for certian values
 (r[1982] || []).map {|v| { 5 => 4, 4 => 5, 7 => 8 }.fetch(v,v)}
 
@@ -39,14 +39,10 @@ r.external_id.to_s['1460465'] ? 1 : 2
 ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count) rescue nil
 
 
-
-# Is this one necessary? Just to keep the dataset clean, or what?
-r[1487].blank? ? nil : r[1487]
-
-# Hmm...coding an uncoded question? Use a case statement?
+# Hmm...coding an uncoded question? Use a case statement or a CSV lookup?
 Question.find(2102).labels_hash[r[2102]]
 
-# hash lookup - use a case statement
+# hash lookup - use a case statement or CSV
 { "paper" => 1, "online" => 2 }[r[2757]]
 
 

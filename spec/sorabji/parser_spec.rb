@@ -20,7 +20,9 @@ describe 'dashboard examples' do
     102 => 3,
     123 => "Alamo Square",
     456 => "San Francisco",
-    789 => "California"
+    789 => "California",
+    2280 => "Tuesday, January 10, 1984",
+    2281 => "8:45 PM"
 
   }}
 
@@ -42,11 +44,21 @@ describe 'dashboard examples' do
     [' (r[2465] and r[2465].include?(1)) ? 1 : 2' , 'if[included?[1 {2465}] 1 2]'                 , 2],
     ['[101, 102].inject(0){|s,i| s + r[i].to_i'   , 'sum[{101} {102} {103}]'                      , 6],
     ['Array(r[101])'                              , '[{101}]'                                     , [1]],
-    ['(a = [123, 456, 789].map {|x| r[x] }.compact.join("; ")).present? ? a : nil',
-                     'concat[present{122 123 456 789} "; "]', "Alamo Square; San Francisco; California"],
-    ['(a = [123, 456, 789].map {|x| r[x] }.compact.join("; ")).present? ? a : nil',
-                     'concat[present{122 124 457 788} "; "]', nil]
-
+    [
+      '(a = [123, 456, 789].map {|x| r[x] }.compact.join("; ")).present? ? a : nil',
+      'concat[present{122 123 456 789} "; "]', 
+      "Alamo Square; San Francisco; California"
+    ], [
+      '(a = [123, 456, 789].map {|x| r[x] }.compact.join("; ")).present? ? a : nil',
+      'concat[present{122 124 457 788} "; "]', 
+      nil
+    ], ['r[1487].blank? ? nil : r[1487]', "if[all{1487} {1487}]", nil],
+    ['r[276].blank? ? nil : r[276]', "if[all{276} {276}]", 5],
+    [
+      'Time.strptime("#{r[2280]} #{r[2281}", "%A, %B, %d, %Y %l:%M %p")',
+      'parse_date[concat[{2280 2281} " "] "%A, %B %d, %Y %l:%M %p"]', 
+      Time.new(1984, 1, 10, 20, 45)
+    ]
 
   ].each do |old_style, new_style, expectation|
     specify(old_style) do

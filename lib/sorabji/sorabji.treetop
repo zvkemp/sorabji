@@ -44,7 +44,7 @@ grammar Sorabji
   end
 
   rule function
-    ( f_default / f_ternary / f_mean / f_included / f_sum / f_all / f_concat / f_present )
+    ( f_default / f_ternary / f_mean / f_included / f_sum / f_all / f_concat / f_present / f_parse_date )
   end
 
   rule argument_list
@@ -83,6 +83,10 @@ grammar Sorabji
 
   rule f_present
     "present" args:argument_list <Sorabji::FunctionPresentNode>
+  end
+
+  rule f_parse_date
+    "parse_date" args:argument_list <Sorabji::FunctionParseDateNode>
   end
 
   rule list

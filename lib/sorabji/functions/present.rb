@@ -12,7 +12,7 @@ module Sorabji
 
   class FunctionPresent < Struct.new(:args)
     def to_proc
-      ->(r){ args.to_proc.call(r).select(&:present?) }
+      ->(r){ Array(args.to_proc.call(r)).flatten.select(&:present?) }
     end
   end
 end

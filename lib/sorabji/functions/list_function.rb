@@ -8,7 +8,7 @@ module Sorabji
   class ListFunction < Struct.new(:left, :right, :operation)
     def to_proc
       sym = symbol_for(operation)
-      ->(r){ Array(left.to_proc.call(r)).send(sym, Array(right.to_proc.call(r))) }
+      ->(r){ Array(left.to_proc.call(r)).flatten.send(sym, Array(right.to_proc.call(r)).flatten) }
     end
 
     private

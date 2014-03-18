@@ -22,7 +22,9 @@ describe 'dashboard examples' do
     456 => "San Francisco",
     789 => "California",
     2280 => "Tuesday, January 10, 1984",
-    2281 => "8:45 PM"
+    2281 => "8:45 PM",
+    1381 => 35,
+    1377 => 99
 
   }}
 
@@ -60,8 +62,16 @@ describe 'dashboard examples' do
       Time.new(1984, 1, 10, 20, 45)
     ], [
       'ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count)',
-      'mean[({1381 1379 1377} - [99])]',
+      'mean[present[difference{1381 1379 1377}[99]]]',
       35
+    ], [
+      'ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count)',
+      'mean[difference[present{1381 1379 1377}][99]]',
+      35
+    ], [
+      'ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count)',
+      'mean[difference[present{1384 1382 1380}][99]]',
+      nil
     ]
 
   ].each do |old_style, new_style, expectation|

@@ -8,7 +8,7 @@ module Sorabji
   class FunctionMean < Struct.new(:args)
     def to_proc
       ->(r){ 
-        values = args.to_proc.call(r).compact
+        values = args.to_proc.call(r).compact.flatten
         if values.any?
           values.inject(:+).to_f / values.count
         else

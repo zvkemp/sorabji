@@ -22,6 +22,8 @@ tested:
   r[1487].blank? ? nil : r[1487]
   r[:date] = Time.strptime("#{r[2280]} #{r[2281]}", "%A, %B %d, %Y %l:%M %p")
 
+  # trickety: mean of present values except 99
+  ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count) rescue nil
 
 untested:
 # string sub
@@ -32,9 +34,6 @@ r.external_id.to_s['1460465'] ? 1 : 2
 
 # this is trickety: array of values with substitutions for certian values
 (r[1982] || []).map {|v| { 5 => 4, 4 => 5, 7 => 8 }.fetch(v,v)}
-
-# trickety: mean of present values except 99
-ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count) rescue nil
 
 
 

@@ -22,4 +22,5 @@ module Sorabji
   require 'sorabji/functions/concat'
   require 'sorabji/functions/present'
   require 'sorabji/functions/parse_date'
+  require 'sorabji/functions/list_function'
 end

@@ -1,5 +1,4 @@
 grammar Sorabji
-
   rule statement
     expression* <Sorabji::StatementNode>
   end
@@ -43,8 +42,12 @@ grammar Sorabji
     '(' content:( entity / operation ) ')' <Sorabji::BracketedNode>
   end
 
+  rule list_function
+    operation:('union' / 'join' / 'difference' / 'intersect') left:argument_list right:argument_list <Sorabji::ListFunctionNode>
+  end
+
   rule function
-    ( f_default / f_ternary / f_mean / f_included / f_sum / f_all / f_concat / f_present / f_parse_date )
+    ( f_default / f_ternary / f_mean / f_included / f_sum / f_all / f_concat / f_present / f_parse_date / list_function )
   end
 
   rule argument_list

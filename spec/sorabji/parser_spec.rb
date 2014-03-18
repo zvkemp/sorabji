@@ -58,6 +58,10 @@ describe 'dashboard examples' do
       'Time.strptime("#{r[2280]} #{r[2281}", "%A, %B, %d, %Y %l:%M %p")',
       'parse_date[concat[{2280 2281} " "] "%A, %B %d, %Y %l:%M %p"]', 
       Time.new(1984, 1, 10, 20, 45)
+    ], [
+      'ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count)',
+      'mean[({1381 1379 1377} - [99])]',
+      35
     ]
 
   ].each do |old_style, new_style, expectation|

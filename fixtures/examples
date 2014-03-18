@@ -20,12 +20,10 @@ tested:
 
   # Is this one necessary? Just to keep the dataset clean, or what?
   r[1487].blank? ? nil : r[1487]
+  r[:date] = Time.strptime("#{r[2280]} #{r[2281]}", "%A, %B %d, %Y %l:%M %p")
+
 
 untested:
-
-# date parsing
-r[:date] = Time.strptime("#{r[2280]} #{r[2281]}", "%A, %B %d, %Y %l:%M %p")
-
 # string sub
 r[2008].to_s.gsub(%Q{%},%Q{}).to_i
 
@@ -35,10 +33,12 @@ r.external_id.to_s['1460465'] ? 1 : 2
 # this is trickety: array of values with substitutions for certian values
 (r[1982] || []).map {|v| { 5 => 4, 4 => 5, 7 => 8 }.fetch(v,v)}
 
-# trickety: 
+# trickety: mean of present values except 99
 ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count) rescue nil
 
 
+
+# DO NOT IMPLEMENT BELOW
 # Hmm...coding an uncoded question? Use a case statement or a CSV lookup?
 Question.find(2102).labels_hash[r[2102]]
 

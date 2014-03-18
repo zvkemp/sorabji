@@ -9,7 +9,10 @@ describe Sorabji::FunctionTernary do
     ["if[{276} ({276} + 1) 1000]", 2001, 1000, "check presence of variable"],
     ["if[true 100 500]", 100, 100, "boolean true"],
     ["if[false 100 500]", 500, 500, "boolean false"],
-    ["if{276 201 202}", 2001, 1001, "ident list"]
+    ["if{276 201 202}", 2001, 1001, "ident list"],
+
+    ["if[{276} 1]", 1, nil, "missing false value"]
+
   ].each do |example, true_exp, false_exp, desc|
     describe desc do
       let(:ast){ parse(example).to_ast }
@@ -23,3 +26,4 @@ describe Sorabji::FunctionTernary do
   end
 
 end
+

@@ -18,4 +18,5 @@ module Sorabji
   require 'sorabji/functions/mean'
   require 'sorabji/functions/included'
   require 'sorabji/functions/sum'
+  require 'sorabji/functions/all'
 end

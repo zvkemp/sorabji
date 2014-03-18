@@ -44,7 +44,7 @@ grammar Sorabji
   end
 
   rule function
-    ( f_default / f_ternary / f_mean / f_included / f_sum )
+    ( f_default / f_ternary / f_mean / f_included / f_sum / f_all )
   end
 
   rule argument_list
@@ -71,6 +71,10 @@ grammar Sorabji
 
   rule f_sum
     "sum" args:argument_list <Sorabji::FunctionSumNode>
+  end
+
+  rule f_all
+    "all" args:argument_list <Sorabji::FunctionAllNode>
   end
 
   rule list

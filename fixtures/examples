@@ -49,3 +49,5 @@ Question.find(2102).labels_hash[r[2102]]
 # hash lookup - use a case statement
 { "paper" => 1, "online" => 2 }[r[2757]]
 
+
+

@@ -54,6 +54,11 @@ Or install it yourself as:
   This is **only** applicable to lists whose values all come from identifiers. You cannot mix regular values in an identifier list.
 
 
+#### Conditional Statements
+
+Conditionals can take two forms: `if[condition true_value]` or `if[condition true_value false_value]`. In the first case, `nil` is returned from the proc if `condition` is falsey.
+
+
 
 
 ## Todo

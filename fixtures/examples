@@ -25,9 +25,14 @@ tested:
   # trickety: mean of present values except 99
   ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count) rescue nil
 
+  #string match (could probably be done with greater than)
+  r.external_id.to_s['1460465'] ? 1 : 2
+
 untested:
 # string sub
 r[2008].to_s.gsub(%Q{%},%Q{}).to_i
+
+
 
 # DO NOT IMPLEMENT BELOW
 # Hmm...coding an uncoded question? Use a case statement or a CSV lookup?
@@ -40,6 +45,4 @@ Question.find(2102).labels_hash[r[2102]]
 # use a csv
 (r[1982] || []).map {|v| { 5 => 4, 4 => 5, 7 => 8 }.fetch(v,v)}
 
-#string match (could probably be done with greater than)
-r.external_id.to_s['1460465'] ? 1 : 2
 

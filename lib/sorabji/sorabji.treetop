@@ -47,7 +47,17 @@ grammar Sorabji
   end
 
   rule function
-    ( f_default / f_ternary / f_mean / f_included / f_sum / f_all / f_concat / f_present / f_parse_date / list_function )
+    f_default / 
+    f_ternary / 
+    f_mean / 
+    f_included / 
+    f_match / 
+    f_sum / 
+    f_all / 
+    f_concat / 
+    f_present / 
+    f_parse_date / 
+    list_function
   end
 
   rule argument_list
@@ -70,6 +80,10 @@ grammar Sorabji
 
   rule f_included
     "included?" args:argument_list <Sorabji::FunctionIncludedNode>
+  end
+
+  rule f_match
+    "match?" args:argument_list <Sorabji::FunctionMatchNode>
   end
 
   rule f_sum

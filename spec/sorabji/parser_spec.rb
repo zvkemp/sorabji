@@ -54,8 +54,8 @@ describe 'dashboard examples' do
       '(a = [123, 456, 789].map {|x| r[x] }.compact.join("; ")).present? ? a : nil',
       'concat[present{122 124 457 788} "; "]', 
       nil
-    ], ['r[1487].blank? ? nil : r[1487]', "if[all{1487} {1487}]", nil],
-    ['r[276].blank? ? nil : r[276]', "if[all{276} {276}]", 5],
+    ], ['r[1487].blank? ? nil : r[1487]', "if[all?{1487} {1487}]", nil],
+    ['r[276].blank? ? nil : r[276]', "if[all?{276} {276}]", 5],
     [
       'Time.strptime("#{r[2280]} #{r[2281}", "%A, %B, %d, %Y %l:%M %p")',
       'parse_date[concat[{2280 2281} " "] "%A, %B %d, %Y %l:%M %p"]', 

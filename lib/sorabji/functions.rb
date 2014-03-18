@@ -17,6 +17,7 @@ module Sorabji
   require 'sorabji/functions/ternary'
   require 'sorabji/functions/mean'
   require 'sorabji/functions/included'
+  require 'sorabji/functions/match'
   require 'sorabji/functions/sum'
   require 'sorabji/functions/all'
   require 'sorabji/functions/concat'

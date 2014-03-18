@@ -19,4 +19,6 @@ module Sorabji
   require 'sorabji/functions/included'
   require 'sorabji/functions/sum'
   require 'sorabji/functions/all'
+  require 'sorabji/functions/concat'
+  require 'sorabji/functions/present'
 end

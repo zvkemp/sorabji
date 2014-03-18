@@ -17,7 +17,11 @@ describe 'dashboard examples' do
     270 => 101,
     external_id: 1526375,
     101 => 1,
-    102 => 3
+    102 => 3,
+    123 => "Alamo Square",
+    456 => "San Francisco",
+    789 => "California"
+
   }}
 
   let(:reference){ OpenStruct.new(year: 2013) }
@@ -37,7 +41,12 @@ describe 'dashboard examples' do
     ['r.external_id > 1526374 ? 2 : 1'            , 'if[({external_id} > 1526374) "big" "small"]' , 'big'],
     [' (r[2465] and r[2465].include?(1)) ? 1 : 2' , 'if[included?[1 {2465}] 1 2]'                 , 2],
     ['[101, 102].inject(0){|s,i| s + r[i].to_i'   , 'sum[{101} {102} {103}]'                      , 6],
-    ['Array(r[101])'                              , '[{101}]'                                     , [1]]
+    ['Array(r[101])'                              , '[{101}]'                                     , [1]],
+    ['(a = [123, 456, 789].map {|x| r[x] }.compact.join("; ")).present? ? a : nil',
+                     'concat[present{122 123 456 789} "; "]', "Alamo Square; San Francisco; California"],
+    ['(a = [123, 456, 789].map {|x| r[x] }.compact.join("; ")).present? ? a : nil',
+                     'concat[present{122 124 457 788} "; "]', nil]
+
 
   ].each do |old_style, new_style, expectation|
     specify(old_style) do

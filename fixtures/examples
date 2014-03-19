@@ -1,0 +1,48 @@
+tested:
+  r[276]
+  2013 - r[270]
+  year - r[185]
+  5369
+  r[1793]*r[1417]
+  r[1424]/r[1423]
+  r[1632] || r[1626] || r[1625] #=> uses `default[{1632} {1626} {1625}]`
+  (rx = r[2103] ? r[2103] : (100 + r[2102]))
+  (r[270].to_i < 100 ? 1900 + r[270].to_i : r[270].to_i) if r[270].present?
+  r.external_id > 1526374 ? 2 : 1
+  (r[2465] and r[2465].include?(1)) ? 1 : 2
+  [1424,1425,1426,1427,1428,1429].inject(0) {|sum, id| sum + r[id].to_i }
+
+  # convert single-select to multiple-select
+  Array(r[1604])
+
+  #concat
+  (a = [2736,2737,2738,2739].map {|id| r[id] }.compact.join("; ")).present? ? a : nil
+
+  # Is this one necessary? Just to keep the dataset clean, or what?
+  r[1487].blank? ? nil : r[1487]
+  r[:date] = Time.strptime("#{r[2280]} #{r[2281]}", "%A, %B %d, %Y %l:%M %p")
+
+  # trickety: mean of present values except 99
+  ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count) rescue nil
+
+  #string match (could probably be done with greater than)
+  r.external_id.to_s['1460465'] ? 1 : 2
+
+untested:
+# string sub
+r[2008].to_s.gsub(%Q{%},%Q{}).to_i
+
+
+
+# DO NOT IMPLEMENT BELOW
+# Hmm...coding an uncoded question? Use a case statement or a CSV lookup?
+Question.find(2102).labels_hash[r[2102]]
+
+# hash lookup - use a case statement or CSV
+{ "paper" => 1, "online" => 2 }[r[2757]]
+
+# this is trickety: array of values with substitutions for certian values
+# use a csv
+(r[1982] || []).map {|v| { 5 => 4, 4 => 5, 7 => 8 }.fetch(v,v)}
+
+

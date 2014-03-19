@@ -4,8 +4,6 @@ describe Sorabji::Parser do
   specify { parser.wont_be_nil }
   specify { parser.must_be_instance_of SorabjiParser }
 
-  describe 'errors' do
-  end
 end
 
 describe 'dashboard examples' do
@@ -30,7 +28,13 @@ describe 'dashboard examples' do
 
   let(:reference){ OpenStruct.new(year: 2013) }
 
-  before { stub(obj).reference_object { reference } }
+  before do
+    Sorabji.config do |c|
+      c.reference_object_method = :reference_object
+    end
+
+    stub(obj).reference_object { reference }
+  end
 
   [
     ["r[276]"                                     , "{276}"                                       , 5],

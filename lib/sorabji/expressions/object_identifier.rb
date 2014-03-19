@@ -28,7 +28,11 @@ module Sorabji
 
   class ReferenceObjectIdentifier < Struct.new(:value)
     def to_proc
-      ->(r){ r.reference_object.send(value) }
+      ->(r){ r.send(reference_object_method).send(value) }
+    end
+
+    def reference_object_method
+      Sorabji::config.reference_object_method
     end
   end
 end

@@ -21,6 +21,7 @@ describe "Identifiers" do
     let(:ref){ Object.new }
     let(:ast){ parse('{{year}}').to_ast }
     before do
+      Sorabji::config.reference_object_method = :reference_object
       stub(object).reference_object { ref } 
       stub(ref).year { 2014 }
     end

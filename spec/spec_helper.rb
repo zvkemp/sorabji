@@ -7,6 +7,10 @@ require 'rr'
 
 
 class MiniTest::Spec
+  before do
+    Sorabji::reset_config!
+  end
+
   def parser
     SorabjiParser.new
   end

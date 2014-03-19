@@ -31,6 +31,7 @@ describe 'dashboard examples' do
   before do
     Sorabji.config do |c|
       c.reference_object_method = :reference_object
+      c.reference_object_whitelist << :year
     end
 
     stub(obj).reference_object { reference }

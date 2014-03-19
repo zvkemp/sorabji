@@ -21,7 +21,11 @@ describe "Identifiers" do
     let(:ref){ Object.new }
     let(:ast){ parse('{{year}}').to_ast }
     before do
-      Sorabji::config.reference_object_method = :reference_object
+      Sorabji::config do |sb|
+        sb.reference_object_method = :reference_object
+        sb.reference_object_whitelist << :year
+      end
+
       stub(object).reference_object { ref } 
       stub(ref).year { 2014 }
     end
@@ -29,9 +33,9 @@ describe "Identifiers" do
     specify { ast.must_equal Sorabji::ReferenceObjectIdentifier.new(:year) }
     specify { ast.to_proc.call(object).must_equal 2014 }
 
-    specify "missing ref value" do
+    specify "non-whitelisted messages are intercepted" do
       function = parse("{{missing}}").to_ast.to_proc
-      ->{ function.call(object) }.must_raise NoMethodError
+      ->{ function.call(object) }.must_raise Sorabji::NoWhitelistedMethodError
     end
   end
 end

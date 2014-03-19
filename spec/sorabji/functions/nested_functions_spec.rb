@@ -1,9 +1,12 @@
 require_relative '../../spec_helper'
 
 describe "Sorabji::Nested Functions" do
-  before {
-    Sorabji::config.reference_object_method = :reference_object
-  }
+  before do
+    Sorabji::config do |sb|
+      sb.reference_object_method = :reference_object
+      sb.reference_object_whitelist << :year
+    end
+  end
 
   let(:expression){ %{default[{101} {102} if[{276} ({{year}} - {276}) {{year}}]]} }
   let(:ast){ parse(expression).to_ast }

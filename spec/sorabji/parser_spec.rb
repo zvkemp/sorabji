@@ -46,7 +46,7 @@ describe 'dashboard examples' do
     ["r[276] / r[280]"                            , "{276} / {280}"                               , 1.25],
     ["r[101] || r[102] || r[103]"                 , "default{101 102 103}"                  , 1],
     ["r[2103] ? r[2103] : (100 + r[2102])"        , "if[{2103} {2103} (100 + {2102})]"            , 117],
-    ['r[270] < 100 ? 1900 + r[270] : r[270]'      , 'if[({270} > 100) (1900 + {270}) {270}]'      , 2001],
+    ['r[270] < 100 ? 1900 + r[270] : r[270]'      , 'if[{270} > 100 (1900 + {270}) {270}]'      , 2001],
     ['r.external_id > 1526374 ? 2 : 1'            , 'if[({external_id} > 1526374) "big" "small"]' , 'big'],
     [' (r[2465] and r[2465].include?(1)) ? 1 : 2' , 'if[included?[1 {2465}] 1 2]'                 , 2],
     ['[101, 102].inject(0){|s,i| s + r[i].to_i'   , 'sum[{101} {102} {103}]'                      , 6],
@@ -67,7 +67,7 @@ describe 'dashboard examples' do
       Time.new(1984, 1, 10, 20, 45)
     ], [
       'ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count)',
-      'mean[present[difference{1381 1379 1377}[99]]]',
+      'mean[difference{1381 1379 1377}[99]]',
       35
     ], [
       'ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count)',

@@ -12,12 +12,31 @@ module Sorabji
 
   class ObjectIdentifier < Struct.new(:value)
     def to_proc
-      ->(r){ r[value] }
+      ->(r){ sanitized_value_chain(r[value]) }
     end
 
     def inspect
       "{#{value}}"
     end
+
+  private
+
+    def sanitized_value_chain(x)
+      integer_value(x)
+    end
+
+    def integer_value(x)
+      Integer(x)
+    rescue 
+      float_value(x)
+    end
+
+    def float_value(x)
+      Float(x)
+    rescue
+      x
+    end
+
   end
 
   class ReferenceObjectIdentifierNode < ASTNode

@@ -13,4 +13,9 @@ describe Sorabji::FunctionDefault do
   ].each do |obj, expectation|
     specify { function[obj].must_equal expectation }
   end
+
+  specify do
+    func = parse("default[{276} {275} 101]").to_ast.to_proc
+    func.call({}).must_equal 101
+  end
 end

@@ -77,4 +77,13 @@ describe Sorabji::StackOperation do
     end
 
   end
+
+  describe "automatic string conversion" do
+
+    let(:data_object){ { 270 => "1958" } }
+    let(:expression){ "2014 - {270}" }
+    let(:sb_proc){ parse(expression).to_ast.to_proc }
+
+    specify { puts "<<<<<<<\n"; sb_proc.call(data_object).must_equal(2014 - 1958) }
+  end
 end

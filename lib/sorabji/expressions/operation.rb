@@ -38,13 +38,15 @@ module Sorabji
     def to_proc
       sort_and_group_operations
 
-      ->(r){
+      ->(r){ 
         current = next_operand_proc.call(r)
-        until operators.empty?
+        puts current.inspect
+        loop do # Automatically ends when StopIteration is raised by enum
           current_operator = next_operator
           current = current.to_f if current_operator == :/
           current = current.send(current_operator, next_operand_proc.call(r))
         end
+        rewind!
         current
       }
     end
@@ -56,12 +58,26 @@ module Sorabji
         @operand_stack, @operator_stack = *EnsureOperationPrecedence.new(operands, operators).process
       end
 
+      def rewind!
+        operators_enum.rewind
+        operands_enum.rewind
+      end
+
+      def operators_enum
+        @operators_enum ||= operators.to_enum
+      end
+
+      def operands_enum
+        @operands_enum ||= operands.to_enum
+      end
+
       def next_operator
-        operators.shift.value
+        operators_enum.next.value
       end
 
       def next_operand_proc
-        operands.shift.to_proc
+        # operands.shift.to_proc
+        operands_enum.next.to_proc
       end
 
       def operator_order(operator)

@@ -67,6 +67,16 @@ describe Sorabji::StackOperation do
       ast.to_proc.call(object).must_equal (123 - (456 * 789) + (1011 * 2))
     end
 
+    specify "a proc can be reused (operation stack is reset)" do
+      parsed = parse("123 - 456 * 789 + 1011 * 2")
+      ast = parsed.to_ast
+      puts ast.inspect
+      r = ast.to_proc
+      a = r.call(object)
+      b = r.call(object)
+      a.must_equal b
+    end
+
     [
       ['123-(456-789)', 456],
       ['(123-456)-789', -1122]
@@ -84,6 +94,6 @@ describe Sorabji::StackOperation do
     let(:expression){ "2014 - {270}" }
     let(:sb_proc){ parse(expression).to_ast.to_proc }
 
-    specify { puts "<<<<<<<\n"; sb_proc.call(data_object).must_equal(2014 - 1958) }
+    specify { sb_proc.call(data_object).must_equal(2014 - 1958) }
   end
 end

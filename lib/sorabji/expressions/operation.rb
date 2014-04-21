@@ -40,7 +40,6 @@ module Sorabji
 
       ->(r){ 
         current = next_operand_proc.call(r)
-        puts current.inspect
         loop do # Automatically ends when StopIteration is raised by enum
           current_operator = next_operator
           current = current.to_f if current_operator == :/

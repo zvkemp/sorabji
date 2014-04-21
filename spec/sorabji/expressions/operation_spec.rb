@@ -15,17 +15,12 @@ describe Sorabji::StackOperation do
     }}
 
     ['+', '*', '/', '-'].each do |operator|
-      ["125#{operator}500",
-       "125 #{operator}500",
-       "125 #{operator} 500"].each do |example|
-        #specify "operation <#{example}>" do
-          #ast = parse(example).to_ast
-          #ast.must_equal expectations[operator][:expression]
-        #end
-
-        specify "operation to_proc <#{example}>" do
-          ast = parse(example).to_ast
-          ast.to_proc.call(object).must_equal expectations[operator][:result]
+      ["125#{operator}500", "125 #{operator}500", "125 #{operator} 500"].each do |example|
+        describe "operation :: #{operator} #{example}" do
+          let(:proc_object){ parse(example).to_ast.to_proc }
+          specify "operation to_proc <#{example}>" do
+            3.times { proc_object.call(object).must_equal expectations[operator][:result] }
+          end
         end
       end
 
@@ -37,40 +32,25 @@ describe Sorabji::StackOperation do
       end
     end
 
-    specify "compound addition" do
-      ast = parse("125 + {2} + 10").to_ast
-      ast.to_proc.call(object).must_equal 635
+
+    [
+      ["125 + {2} + 10", 635, "compound addition"],
+      ["125 + 500 * {2}", 125 + 500 * 500, "a nested operation"],
+      ["(123 + 456) * {1}", (123+456)*125, "an operation with brackets"],
+      ["(123 + 456)", (123 + 456), "an operation in brackets"],
+      ["123 - 456 - 789", -1122, "subtraction operation order is left-right"],
+      ["123 - 456 * 789 + 1011 * 2", (123 - (456 * 789) + (1011 * 2)), "multiple order-of-ops issues"]
+    ].each do |example, expectation, description|
+      specify description do
+        r = parse(example).to_ast.to_proc
+        3.times { r.call(object).must_equal expectation }
+      end
     end
 
-    specify "a nested operation" do
-      ast = parse("125 + 500 * {2}").to_ast
-      ast.to_proc.call(object).must_equal 125 + 500 * 500
-    end
-
-    specify "an operation with brackets" do
-      ast = parse("(123 + 456) * {1}").to_ast
-      ast.to_proc.call(object).must_equal (123+456)*125
-    end
-
-    specify "an operation in brackets" do
-      ast = parse("(123 + 456)").to_ast
-      ast.to_proc.call(object).must_equal (123 + 456)
-    end
-
-    specify "subtraction operation order is left-right" do
-      ast = parse("123 - 456 - 789").to_ast
-      ast.to_proc.call(object).must_equal -1122
-    end
-
-    specify "multiple order-of-ops issues" do
-      ast = parse("123 - 456 * 789 + 1011 * 2").to_ast
-      ast.to_proc.call(object).must_equal (123 - (456 * 789) + (1011 * 2))
-    end
 
     specify "a proc can be reused (operation stack is reset)" do
       parsed = parse("123 - 456 * 789 + 1011 * 2")
       ast = parsed.to_ast
-      puts ast.inspect
       r = ast.to_proc
       a = r.call(object)
       b = r.call(object)
@@ -85,7 +65,6 @@ describe Sorabji::StackOperation do
         parse(operation).to_ast.to_proc.call(object).must_equal expectation
       end
     end
-
   end
 
   describe "automatic string conversion" do

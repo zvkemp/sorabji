@@ -1,3 +1,4 @@
+require 'active_support/core_ext'
 module Sorabji
   # returns a string from an argument list. The last item in the list will be used as the 
   # separator.
@@ -14,7 +15,7 @@ module Sorabji
     def to_proc
       ->(r){ 
         *elements, sep = args.to_proc.call(r).flatten
-        elements.join(sep.to_s) if elements.present?
+        elements.compact.join(sep.to_s) if elements.any?(&:present?)
       }
     end
   end

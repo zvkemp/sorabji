@@ -11,6 +11,10 @@ module Sorabji
       ->(r){ Array(left.to_proc.call(r)).flatten.send(sym, Array(right.to_proc.call(r)).flatten) }
     end
 
+    def object_identifiers
+      [left, right].map(&:object_identifiers).flatten
+    end
+
     private
 
     def symbol_for(op)

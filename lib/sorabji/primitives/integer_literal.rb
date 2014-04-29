@@ -5,7 +5,7 @@ module Sorabji
     end
   end
 
-  class IntegerLiteral < Struct.new(:value)
+  class IntegerLiteral < Literal
     def to_proc
       ->(*args){ value }
     end

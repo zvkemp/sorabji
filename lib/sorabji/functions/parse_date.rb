@@ -6,7 +6,7 @@ module Sorabji
     end
   end
 
-  class FunctionParseDate < Struct.new(:args)
+  class FunctionParseDate < BasicFunction
     def to_proc
       ->(r) {
         value, format_string = args.to_proc.call(r)

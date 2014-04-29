@@ -10,7 +10,7 @@ module Sorabji
     end
   end
 
-  class FunctionTernary < Struct.new(:args)
+  class FunctionTernary < BasicFunction
     def to_proc
       ->(r) {
         # condition, v_true, v_false = *args.to_proc.call(r)

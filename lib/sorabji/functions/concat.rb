@@ -11,7 +11,7 @@ module Sorabji
     end
   end
 
-  class FunctionConcat < Struct.new(:args)
+  class FunctionConcat < BasicFunction
     def to_proc
       ->(r){ 
         *elements, sep = args.to_proc.call(r).flatten

@@ -5,7 +5,7 @@ module Sorabji
     end
   end
 
-  class FunctionSum < Struct.new(:args)
+  class FunctionSum < BasicFunction
     def to_proc
       ->(r){ Array(args.to_proc.call(r)).compact.inject(0, :+) }
     end

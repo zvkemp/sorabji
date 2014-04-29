@@ -38,51 +38,73 @@ describe 'dashboard examples' do
   end
 
   [
-    ["r[276]"                                     , "{276}"                                       , 5],
-    ["2013 - r[276]"                              , "2013 - {276}"                                , 2008],
-    ["year - r[276]"                              , "{{year}} - {276}"                            , 2008],
-    ["5369"                                       , "5369"                                        , 5369],
-    ["r[276] * r[280]"                            , "{276} * {280}"                               , 20],
-    ["r[276] / r[280]"                            , "{276} / {280}"                               , 1.25],
-    ["r[101] || r[102] || r[103]"                 , "default{101 102 103}"                  , 1],
-    ["r[2103] ? r[2103] : (100 + r[2102])"        , "if[{2103} {2103} (100 + {2102})]"            , 117],
-    ['r[270] < 100 ? 1900 + r[270] : r[270]'      , 'if[{270} > 100 (1900 + {270}) {270}]'      , 2001],
-    ['r.external_id > 1526374 ? 2 : 1'            , 'if[({external_id} > 1526374) "big" "small"]' , 'big'],
-    [' (r[2465] and r[2465].include?(1)) ? 1 : 2' , 'if[included?[1 {2465}] 1 2]'                 , 2],
-    ['[101, 102].inject(0){|s,i| s + r[i].to_i'   , 'sum[{101} {102} {103}]'                      , 6],
-    ['Array(r[101])'                              , '[{101}]'                                     , [1]],
+    ["r[276]", "{276}", 5, [276]],
+    ["2013 - r[276]", "2013 - {276}", 2008, [276]],
+    ["year - r[276]", "{{year}} - {276}", 2008, [276]],
+    ["5369", "5369", 5369, []],
+    ["r[276] * r[280]", "{276} * {280}", 20, [276, 280]],
+    ["r[276] / r[280]", "{276} / {280}", 1.25, [276, 280]],
+    ["r[101] || r[102] || r[103]", "default{101 102 103}", 1, [101, 102, 103]],
+    ["r[2103] ? r[2103] : (100 + r[2102])", "if[{2103} {2103} (100 + {2102})]", 117, [2103, 2103, 2102]],
+    ['r[270] < 100 ? 1900 + r[270] : r[270]', 'if[{270} > 100 (1900 + {270}) {270}]', 2001, [270, 270, 270]],
+    ['r.external_id > 1526374 ? 2 : 1', 'if[({external_id} > 1526374) "big" "small"]' , 'big', [:external_id]],
+    [' (r[2465] and r[2465].include?(1)) ? 1 : 2' , 'if[included?[1 {2465}] 1 2]', 2, [2465]],
+    ['[101, 102].inject(0){|s,i| s + r[i].to_i'   , 'sum[{101} {102} {103}]', 6, [101, 102, 103]],
+    ['Array(r[101])', '[{101}]', [1], [101]],
     [
       '(a = [123, 456, 789].map {|x| r[x] }.compact.join("; ")).present? ? a : nil',
       'concat[present{122 123 456 789} "; "]', 
-      "Alamo Square; San Francisco; California"
+      "Alamo Square; San Francisco; California",
+      [122, 123, 456, 789]
     ], [
       '(a = [123, 456, 789].map {|x| r[x] }.compact.join("; ")).present? ? a : nil',
       'concat[present{122 124 457 788} "; "]', 
-      nil
-    ], ['r[1487].blank? ? nil : r[1487]', "if[all?{1487} {1487}]", nil],
-    ['r[276].blank? ? nil : r[276]', "if[all?{276} {276}]", 5],
+      nil,
+      [122, 124, 457, 788]
+    ], ['r[1487].blank? ? nil : r[1487]', "if[all?{1487} {1487}]", nil, [1487, 1487]],
+    ['r[276].blank? ? nil : r[276]', "if[all?{276} {276}]", 5, [276, 276]],
     [
       'Time.strptime("#{r[2280]} #{r[2281}", "%A, %B, %d, %Y %l:%M %p")',
       'parse_date[concat[{2280 2281} " "] "%A, %B %d, %Y %l:%M %p"]', 
-      Time.new(1984, 1, 10, 20, 45)
+      Time.new(1984, 1, 10, 20, 45),
+      [2280, 2281]
     ], [
       'ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count)',
       'mean[difference{1381 1379 1377}[99]]',
-      35
+      35,
+      [1381, 1379, 1377]
     ], [
       'ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count)',
       'mean[difference[present{1381 1379 1377}][99]]',
-      35
+      35,
+      [1381, 1379, 1377]
     ], [
       'ary = r.attributes.values_at(*%w(1381 1379 1377)).compact; ary.delete(99); (ary.inject(:+).to_f / ary.count)',
       'mean[difference[present{1384 1382 1380}][99]]',
-      nil
+      nil,
+      [1384, 1382, 1380]
     ]
 
-  ].each do |old_style, new_style, expectation|
+  ].each do |old_style, new_style, expectation, identifiers|
     specify(old_style) do
       ast = parse(new_style).to_ast
+      ast.object_identifiers.must_equal identifiers
       ast.to_proc.call(obj).must_equal expectation
     end
   end
+
+  describe "extract all object idents" do
+    specify "stack operation" do
+      expression = "{101} + {102}"
+      ast = parse(expression).to_ast
+      ast.object_identifiers.must_equal [101, 102]
+    end
+
+    specify "functions" do
+      expression = "concat[{101 102} \",\"]"
+      ast = parse(expression).to_ast
+      ast.object_identifiers.must_equal [101, 102]
+    end
+  end
+
 end

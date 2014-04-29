@@ -10,7 +10,7 @@ module Sorabji
     end
   end
 
-  class FunctionIncluded < Struct.new(:args)
+  class FunctionIncluded < BasicFunction
     def to_proc
       ->(r){
         exp, value = *args.elements

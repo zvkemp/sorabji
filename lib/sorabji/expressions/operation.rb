@@ -35,6 +35,10 @@ module Sorabji
       "<#SB_STACK #{operands.inspect}#{operators.inspect}>"
     end
 
+    def object_identifiers
+      operands.map(&:object_identifiers).flatten
+    end
+
     def to_proc
       sort_and_group_operations
 

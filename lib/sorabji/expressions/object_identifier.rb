@@ -19,6 +19,10 @@ module Sorabji
       "{#{value}}"
     end
 
+    def object_identifiers
+      [value]
+    end
+
   private
 
     def sanitized_value_chain(x)
@@ -57,6 +61,10 @@ module Sorabji
     def whitelist(value)
       return value if Sorabji::config.reference_object_whitelist.include?(value)
       raise Sorabji::NoWhitelistedMethodError, "`#{value}` is not permitted."
+    end
+
+    def object_identifiers
+      []
     end
 
   end

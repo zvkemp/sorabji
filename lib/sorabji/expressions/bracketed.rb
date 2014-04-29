@@ -9,5 +9,9 @@ module Sorabji
     def to_proc
       contents.to_proc
     end
+
+    def object_identifiers
+      contents.object_identifiers
+    end
   end
 end

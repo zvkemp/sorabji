@@ -11,6 +11,9 @@ module Sorabji
     def to_proc
       -> (r) { elements.map {|e| e.to_proc.call(r) } }
     end
+
+    def object_identifiers
+      elements.map(&:object_identifiers).flatten
+    end
   end
 end
-

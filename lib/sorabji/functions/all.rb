@@ -7,7 +7,7 @@ module Sorabji
     end
   end
 
-  class FunctionAll < Struct.new(:args)
+  class FunctionAll < BasicFunction
     def to_proc
       ->(r){ Array(args.to_proc.call(r)).all?(&:present?) }
     end

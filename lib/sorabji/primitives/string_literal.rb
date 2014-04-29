@@ -5,7 +5,7 @@ module Sorabji
     end
   end
 
-  class StringLiteral < Struct.new(:value)
+  class StringLiteral < Literal
     def to_proc
       ->(*args){ value }
     end

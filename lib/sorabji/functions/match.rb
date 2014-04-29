@@ -6,7 +6,7 @@ module Sorabji
   end
 
 
-  class FunctionMatch < Struct.new(:args)
+  class FunctionMatch < BasicFunction
     def to_proc
       ->(r){
         sample, *rest = args.to_proc.call(r).flatten.map {|x| "#{x}" } 

@@ -5,7 +5,7 @@ module Sorabji
     end
   end
 
-  class FunctionMean < Struct.new(:args)
+  class FunctionMean < BasicFunction
     def to_proc
       ->(r){ 
         values = args.to_proc.call(r).flatten.compact

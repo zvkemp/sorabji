@@ -8,7 +8,13 @@ module Sorabji
     end
   end
 
-  class FunctionDefault < Struct.new(:args)
+  class BasicFunction < Struct.new(:args)
+    def object_identifiers
+      args.object_identifiers.flatten
+    end
+  end
+
+  class FunctionDefault < BasicFunction
     def to_proc
       ->(r) { args.to_proc.call(r).detect {|x| x } }
     end

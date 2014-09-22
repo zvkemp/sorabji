@@ -37,5 +37,8 @@ module Sorabji
   end
 
   class SyntaxError < ::SyntaxError
+    def to_s
+      "<Sorabji::SyntaxError>:: #{message}"
+    end
   end
 end

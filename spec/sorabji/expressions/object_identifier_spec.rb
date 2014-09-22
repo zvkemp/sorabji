@@ -1,12 +1,23 @@
 require_relative '../../spec_helper'
 
 describe "Identifiers" do
-  let(:object){{ 123 => 101, hello: "world" }}
+  let(:object) do
+    { 
+      123 => 101, 
+      hello: "world",
+      124 => 10.2,
+      125 => "10.3",
+      126 => 10.4
+    }
+  end
   describe Sorabji::ObjectIdentifier do
 
     [
       ["{123}", 123, 101],
-      ["{hello}", :hello, "world"]
+      ["{hello}", :hello, "world"],
+      ["{124}", 124, 10.2],
+      ["{125}", 125, 10.3],
+      ["{126}", 126, 10.4]
     ].each do |example, key, expectation|
       describe "object_identifier (#{example})" do
         let(:ast){ parse(example).to_ast }

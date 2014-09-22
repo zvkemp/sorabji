@@ -25,8 +25,10 @@ module Sorabji
 
   private
 
+    KLASS_VALUE_METHODS = { Float => :float_value }
+
     def sanitized_value_chain(x)
-      integer_value(x)
+      send(KLASS_VALUE_METHODS.fetch(x.class, :integer_value), x)
     end
 
     def integer_value(x)

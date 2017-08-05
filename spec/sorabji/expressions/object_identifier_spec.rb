@@ -2,8 +2,8 @@ require_relative '../../spec_helper'
 
 describe "Identifiers" do
   let(:object) do
-    { 
-      123 => 101, 
+    {
+      123 => 101,
       hello: "world",
       124 => 10.2,
       125 => "10.3",
@@ -37,8 +37,8 @@ describe "Identifiers" do
         sb.reference_object_whitelist << :year
       end
 
-      stub(object).reference_object { ref } 
-      stub(ref).year { 2014 }
+      allow(object).to receive(:reference_object) { ref }
+      allow(ref).to receive(:year) { 2014 }
     end
 
     specify { ast.must_equal Sorabji::ReferenceObjectIdentifier.new(:year) }

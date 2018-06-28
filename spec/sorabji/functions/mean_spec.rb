@@ -14,7 +14,9 @@ describe Sorabji::FunctionMean do
       let(:ast){ parse(example).to_ast }
       let(:function){ ast.to_proc }
 
-      specify { function.call(object).must_equal expectation }
+      specify do
+        expect(function.call(object)).to eq expectation
+      end
     end
   end
 end

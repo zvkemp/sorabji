@@ -13,7 +13,9 @@ describe Sorabji::List do
   ].each do |example, expectation, desc|
     describe desc do
       let(:ast){ parse(example).to_ast }
-      specify("#{desc} to_proc"){ ast.to_proc.call(object).must_equal expectation }
+      specify("#{desc} to_proc") do
+        expect(ast.to_proc.call(object)).to eq expectation
+      end
     end
   end
 end

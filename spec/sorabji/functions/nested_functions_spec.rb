@@ -20,8 +20,11 @@ describe "Sorabji::Nested Functions" do
     [{ }, 2014, 'ternary false']
   ].each do |object, expectation, desc|
     describe desc do
-      before { stub(object).reference_object { ref }}
-      specify { function.call(object).must_equal expectation }
+      before { allow(object).to receive(:reference_object) { ref }}
+
+      specify do
+        expect(function.call(object)).to eq expectation
+      end
     end
   end
 end

@@ -1,5 +1,5 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('../lib', __FILE__) 
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'sorabji/version'
 
@@ -19,11 +19,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'treetop'
-  spec.add_dependency 'activesupport', '>= 3.2'
+  spec.add_dependency 'activesupport', '~> 4.0'
   spec.add_development_dependency "bundler", "~> 1.5"
   spec.add_development_dependency "rake"
 
-  spec.add_development_dependency 'guard'
-  spec.add_development_dependency 'guard-minitest'
-  spec.add_development_dependency 'rr'
+  spec.add_development_dependency 'rspec'
 end

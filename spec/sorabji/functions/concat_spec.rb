@@ -10,7 +10,9 @@ describe Sorabji::FunctionConcat do
   ].each do |example, object, expectation, desc|
     describe desc do
       let(:function){ parse(example).to_ast.to_proc }
-      specify { function.call(object).must_equal expectation }
+      specify do
+        expect(function.call(object)).to eq expectation
+      end
     end
   end
 

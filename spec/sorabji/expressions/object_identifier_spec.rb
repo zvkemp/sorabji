@@ -2,8 +2,8 @@ require_relative '../../spec_helper'
 
 describe "Identifiers" do
   let(:object) do
-    { 
-      123 => 101, 
+    {
+      123 => 101,
       hello: "world",
       124 => 10.2,
       125 => "10.3",
@@ -22,8 +22,13 @@ describe "Identifiers" do
       describe "object_identifier (#{example})" do
         let(:ast){ parse(example).to_ast }
 
-        specify { ast.must_equal Sorabji::ObjectIdentifier.new(key) }
-        specify { ast.to_proc.call(object).must_equal expectation }
+        specify do
+          expect(ast).to eq Sorabji::ObjectIdentifier.new(key)
+        end
+
+        specify do
+          expect(ast.to_proc.call(object)).to eq expectation
+        end
       end
     end
   end
@@ -37,16 +42,21 @@ describe "Identifiers" do
         sb.reference_object_whitelist << :year
       end
 
-      stub(object).reference_object { ref } 
-      stub(ref).year { 2014 }
+      allow(object).to receive(:reference_object) { ref }
+      allow(ref).to receive(:year) { 2014 }
     end
 
-    specify { ast.must_equal Sorabji::ReferenceObjectIdentifier.new(:year) }
-    specify { ast.to_proc.call(object).must_equal 2014 }
+    specify do
+      expect(ast).to eq Sorabji::ReferenceObjectIdentifier.new(:year)
+    end
+
+    specify do
+      expect(ast.to_proc.call(object)).to eq 2014
+    end
 
     specify "non-whitelisted messages are intercepted" do
       function = parse("{{missing}}").to_ast.to_proc
-      ->{ function.call(object) }.must_raise Sorabji::NoWhitelistedMethodError
+      expect{ function.call(object) }.to raise_error Sorabji::NoWhitelistedMethodError
     end
   end
 end

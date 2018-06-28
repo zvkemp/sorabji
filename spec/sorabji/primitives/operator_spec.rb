@@ -5,6 +5,8 @@ describe Sorabji::Operator do
   # be parsed into the syntax tree. Operators only exist within other expressions
 
   %w[+ - / *].each do |operator|
-    specify { ->{ parse(operator).to_ast }.must_raise NoMethodError }
+    specify do
+      expect { parse(operator).to_ast }.to raise_error NoMethodError
+    end
   end
 end

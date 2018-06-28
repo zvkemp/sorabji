@@ -19,7 +19,9 @@ describe Sorabji::StackOperation do
         describe "operation :: #{operator} #{example}" do
           let(:proc_object){ parse(example).to_ast.to_proc }
           specify "operation to_proc <#{example}>" do
-            3.times { proc_object.call(object).must_equal expectations[operator][:result] }
+            3.times do
+              expect(proc_object.call(object)).to eq expectations[operator][:result]
+            end
           end
         end
       end
@@ -27,7 +29,7 @@ describe Sorabji::StackOperation do
       ["{1} #{operator} 500", "125 #{operator} {2}"].each do |example|
         specify "operation with lookup <#{example}>" do
           ast = parse(example).to_ast
-          ast.to_proc.call(object).must_equal expectations[operator][:result]
+          expect(ast.to_proc.call(object)).to eq expectations[operator][:result]
         end
       end
     end
@@ -43,7 +45,9 @@ describe Sorabji::StackOperation do
     ].each do |example, expectation, description|
       specify description do
         r = parse(example).to_ast.to_proc
-        3.times { r.call(object).must_equal expectation }
+        3.times do
+          expect(r.call(object)).to eq expectation
+        end
       end
     end
 
@@ -54,7 +58,7 @@ describe Sorabji::StackOperation do
       r = ast.to_proc
       a = r.call(object)
       b = r.call(object)
-      a.must_equal b
+      expect(a).to eq b
     end
 
     [
@@ -62,7 +66,7 @@ describe Sorabji::StackOperation do
       ['(123-456)-789', -1122]
     ].each do |operation, expectation|
       specify "subtraction operation with brackets <#{operation}>" do
-        parse(operation).to_ast.to_proc.call(object).must_equal expectation
+        expect(parse(operation).to_ast.to_proc.call(object)).to eq expectation
       end
     end
   end
@@ -73,6 +77,8 @@ describe Sorabji::StackOperation do
     let(:expression){ "2014 - {270}" }
     let(:sb_proc){ parse(expression).to_ast.to_proc }
 
-    specify { sb_proc.call(data_object).must_equal(2014 - 1958) }
+    specify do
+      expect(sb_proc.call(data_object)).to eq(2014 - 1958)
+    end
   end
 end

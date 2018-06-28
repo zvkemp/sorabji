@@ -1,6 +1,7 @@
-require 'active_support/core_ext'
+require 'active_support/core_ext/object'
+
 module Sorabji
-  # returns a string from an argument list. The last item in the list will be used as the 
+  # returns a string from an argument list. The last item in the list will be used as the
   # separator.
   #
   # Returns nil if the elements array is empty.
@@ -13,7 +14,7 @@ module Sorabji
 
   class FunctionConcat < BasicFunction
     def to_proc
-      ->(r){ 
+      ->(r){
         *elements, sep = args.to_proc.call(r).flatten
         elements.compact.join(sep.to_s) if elements.any?(&:present?)
       }

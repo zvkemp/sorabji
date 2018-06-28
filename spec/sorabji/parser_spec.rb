@@ -1,9 +1,9 @@
 require_relative '../spec_helper'
 
 describe Sorabji::Parser do
-  specify { parser.wont_be_nil }
-  specify { parser.must_be_instance_of SorabjiParser }
-
+  specify do
+    expect(parser).to be_kind_of(SorabjiParser)
+  end
 end
 
 describe 'dashboard examples' do
@@ -34,7 +34,7 @@ describe 'dashboard examples' do
       c.reference_object_whitelist << :year
     end
 
-    stub(obj).reference_object { reference }
+    allow(obj).to receive(:reference_object) { reference }
   end
 
   [
@@ -53,19 +53,19 @@ describe 'dashboard examples' do
     ['Array(r[101])', '[{101}]', [1], [101]],
     [
       '(a = [123, 456, 789].map {|x| r[x] }.compact.join("; ")).present? ? a : nil',
-      'concat[present{122 123 456 789} "; "]', 
+      'concat[present{122 123 456 789} "; "]',
       "Alamo Square; San Francisco; California",
       [122, 123, 456, 789]
     ], [
       '(a = [123, 456, 789].map {|x| r[x] }.compact.join("; ")).present? ? a : nil',
-      'concat[present{122 124 457 788} "; "]', 
+      'concat[present{122 124 457 788} "; "]',
       nil,
       [122, 124, 457, 788]
     ], ['r[1487].blank? ? nil : r[1487]', "if[all?{1487} {1487}]", nil, [1487, 1487]],
     ['r[276].blank? ? nil : r[276]', "if[all?{276} {276}]", 5, [276, 276]],
     [
       'Time.strptime("#{r[2280]} #{r[2281}", "%A, %B, %d, %Y %l:%M %p")',
-      'parse_date[concat[{2280 2281} " "] "%A, %B %d, %Y %l:%M %p"]', 
+      'parse_date[concat[{2280 2281} " "] "%A, %B %d, %Y %l:%M %p"]',
       Time.new(1984, 1, 10, 20, 45),
       [2280, 2281]
     ], [
@@ -88,8 +88,8 @@ describe 'dashboard examples' do
   ].each do |old_style, new_style, expectation, identifiers|
     specify(old_style) do
       ast = parse(new_style).to_ast
-      ast.object_identifiers.must_equal identifiers
-      ast.to_proc.call(obj).must_equal expectation
+      expect(ast.object_identifiers).to eq identifiers
+      expect(ast.to_proc.call(obj)).to eq expectation
     end
   end
 
@@ -97,13 +97,13 @@ describe 'dashboard examples' do
     specify "stack operation" do
       expression = "{101} + {102}"
       ast = parse(expression).to_ast
-      ast.object_identifiers.must_equal [101, 102]
+      expect(ast.object_identifiers).to eq [101, 102]
     end
 
     specify "functions" do
       expression = "concat[{101 102} \",\"]"
       ast = parse(expression).to_ast
-      ast.object_identifiers.must_equal [101, 102]
+      expect(ast.object_identifiers).to eq [101, 102]
     end
   end
 

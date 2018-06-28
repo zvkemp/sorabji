@@ -10,22 +10,24 @@ describe Sorabji::FunctionAll do
   ].each do |example, object, expectation, desc|
     describe desc do
       let(:function){ parse(example).to_ast.to_proc }
-      specify { function.call(object).must_equal expectation }
+      specify do
+        expect(function.call(object)).to eq expectation
+      end
     end
   end
 
   describe "mixing functions" do
     specify 'within an if function' do
       function = parse(%{if[all?{101 102} "yes" "no"]}).to_ast.to_proc
-      function.call({ 101 => 2 }).must_equal 'no'
-      function.call({ 101 => 2, 102 => 3 }).must_equal 'yes'
+      expect(function.call({ 101 => 2 })).to eq 'no'
+      expect(function.call({ 101 => 2, 102 => 3 })).to eq 'yes'
     end
 
     specify 'containing an if function' do
       function = parse(%{all?[if[1 > 0 true false] true]}).to_ast.to_proc
-      function.call({}).must_equal true
+      expect(function.call({})).to eq true
       function = parse(%{all?[if[1 < 0 true false] true]}).to_ast.to_proc
-      function.call({}).must_equal false
+      expect(function.call({})).to eq false
     end
   end
 end

@@ -1,8 +1,13 @@
 require_relative '../../spec_helper'
 
 describe Sorabji::Boolean do
-  specify { parse('true').to_ast.to_proc.call({}).must_equal true }
-  specify { parse('false').to_ast.to_proc.call({}).must_equal false }
+  specify do
+    expect(parse('true').to_ast.to_proc.call({})).to eq true
+  end
+
+  specify do
+    expect(parse('false').to_ast.to_proc.call({})).to eq false
+  end
 
   describe "comparisons" do
     [
@@ -18,7 +23,7 @@ describe Sorabji::Boolean do
       ["1 > {276}", false]
     ].each do |example, expectation|
       specify "comparison #{example}" do
-        parse(example).to_ast.to_proc.call({ 276 => 2 }).must_equal expectation
+        expect(parse(example).to_ast.to_proc.call({ 276 => 2 })).to eq expectation
       end
     end
   end

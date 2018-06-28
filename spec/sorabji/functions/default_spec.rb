@@ -11,11 +11,13 @@ describe Sorabji::FunctionDefault do
     [{ 275 => 301 }, 301],
     [{ 276 => 201, 275 => 301 }, 201]
   ].each do |obj, expectation|
-    specify { function[obj].must_equal expectation }
+    specify do
+      expect(function[obj]).to eq expectation
+    end
   end
 
   specify do
     func = parse("default[{276} {275} 101]").to_ast.to_proc
-    func.call({}).must_equal 101
+    expect(func.call({})).to eq 101
   end
 end

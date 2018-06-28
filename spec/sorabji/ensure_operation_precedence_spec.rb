@@ -11,8 +11,8 @@ describe Sorabji::StackOperation::EnsureOperationPrecedence do
     expected_operators = [sub]
     op = Sorabji::StackOperation::EnsureOperationPrecedence.new(original_operands, original_operators)
     new_ods, new_ops = *op.process
-    new_ops.must_equal expected_operators
-    new_ods.must_equal expected_operands
+    expect(new_ops).to eq expected_operators
+    expect(new_ods).to eq expected_operands
   end
 end
 

@@ -18,9 +18,15 @@ describe Sorabji::FunctionTernary do
       let(:ast){ parse(example).to_ast }
       let(:function){ ast.to_proc }
 
-      specify { function[object_true].must_equal true_exp }
-      specify { function[object_false].must_equal false_exp }
-      specify { function[object_blank].must_equal false_exp }
+      specify do
+        expect(function[object_true]).to eq true_exp
+      end
+      specify do
+        expect(function[object_false]).to eq false_exp
+      end
+      specify do
+        expect(function[object_blank]).to eq false_exp
+      end
 
     end
   end

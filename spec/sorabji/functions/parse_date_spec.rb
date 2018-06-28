@@ -8,7 +8,9 @@ describe Sorabji::FunctionParseDate do
   ].each do |example, object, expectation, desc|
     describe desc do
       let(:function){ parse(example).to_ast.to_proc }
-      specify { function.call(object).must_equal Time.new(1984, 1, 10, 20, 45) }
+      specify do
+        expect(function.call(object)).to eq Time.new(1984, 1, 10, 20, 45)
+      end
     end
   end
 end

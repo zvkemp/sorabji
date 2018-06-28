@@ -1,7 +1,6 @@
 module Sorabji
   class FunctionNode < ASTNode
   end
-
   class FunctionDefaultNode < FunctionNode
     def to_ast
       FunctionDefault.new(args.to_ast)
@@ -26,6 +25,7 @@ module Sorabji
   require 'sorabji/functions/match'
   require 'sorabji/functions/sum'
   require 'sorabji/functions/all'
+  require 'sorabji/functions/any'
   require 'sorabji/functions/concat'
   require 'sorabji/functions/present'
   require 'sorabji/functions/parse_date'

@@ -57,6 +57,7 @@ grammar Sorabji
     f_concat / 
     f_present / 
     f_parse_date / 
+    f_any /
     list_function
   end
 
@@ -100,6 +101,10 @@ grammar Sorabji
 
   rule f_present
     "present" args:argument_list <Sorabji::FunctionPresentNode>
+  end
+
+  rule f_any
+    "any?" args:argument_list <Sorabji::FunctionAnyNode>
   end
 
   rule f_parse_date

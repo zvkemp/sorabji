@@ -107,4 +107,47 @@ describe 'dashboard examples' do
     end
   end
 
+  describe 'values other than exclusions' do
+    let(:expression) { 'any?[difference{276}[1 2]]' }
+    let(:r) { parse(expression).to_ast.to_proc }
+
+    specify do
+      expect(r.call({ })).to eq(false)
+      expect(r.call({ 276 => [1] })).to eq(false)
+      expect(r.call({ 276 => [1, 2] })).to eq(false)
+      expect(r.call({ 276 => [1, 2, 3] })).to eq(true)
+      expect(r.call({ 276 => [] })).to eq(false)
+      expect(r.call({ 276 => [3, 4] })).to eq(true)
+    end
+  end
+
+  describe 'complex inclusion, exclusion' do
+    let(:r) { parse(expression).to_ast.to_proc }
+    let(:expression) do
+      'if[any?[difference{101}[1]] 2 if[list_equal?{101}[1] 1]]'
+    end
+
+    specify do
+      expect(r.call({ })).to eq(nil)
+      expect(r.call({ 101 => [1] })).to eq(1)
+      expect(r.call({ 101 => [1, 2] })).to eq(2)
+      expect(r.call({ 101 => [2, 3] })).to eq(2)
+      expect(r.call({ 101 => [] })).to eq(nil)
+    end
+  end
+
+  describe 'any with intersect' do
+    let(:r) { parse(expression).to_ast.to_proc }
+    let(:expression) do
+      'if[any?[intersect{101}[1 2 3]] 1 0]'
+    end
+
+    specify do
+      expect(r.call({ })).to eq(0)
+      expect(r.call({ 101 => [1] })).to eq(1)
+      expect(r.call({ 101 => [1, 2] })).to eq(1)
+      expect(r.call({ 101 => [2, 3, 4, 5, 6] })).to eq(1)
+      expect(r.call({ 101 => [4, 5, 6] })).to eq(0)
+    end
+  end
 end

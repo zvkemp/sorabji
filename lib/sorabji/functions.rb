@@ -26,6 +26,7 @@ module Sorabji
   require 'sorabji/functions/sum'
   require 'sorabji/functions/all'
   require 'sorabji/functions/any'
+  require 'sorabji/functions/empty'
   require 'sorabji/functions/concat'
   require 'sorabji/functions/present'
   require 'sorabji/functions/parse_date'

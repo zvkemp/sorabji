@@ -58,6 +58,7 @@ grammar Sorabji
     f_present / 
     f_parse_date / 
     f_any /
+    f_empty /
     list_function
   end
 
@@ -105,6 +106,10 @@ grammar Sorabji
 
   rule f_any
     "any?" args:argument_list <Sorabji::FunctionAnyNode>
+  end
+
+  rule f_empty
+    "empty?" args:argument_list <Sorabji::FunctionEmptyNode>
   end
 
   rule f_parse_date

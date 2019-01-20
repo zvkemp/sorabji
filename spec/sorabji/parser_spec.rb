@@ -27,6 +27,7 @@ describe 'dashboard examples' do
   }}
 
   let(:reference){ OpenStruct.new(year: 2013) }
+  let(:r) { parse_to_proc(expression) }
 
   before do
     Sorabji.config do |c|
@@ -109,7 +110,6 @@ describe 'dashboard examples' do
 
   describe 'values other than exclusions' do
     let(:expression) { 'any?[difference{276}[1 2]]' }
-    let(:r) { parse(expression).to_ast.to_proc }
 
     specify do
       expect(r.call({ })).to eq(false)
@@ -122,7 +122,6 @@ describe 'dashboard examples' do
   end
 
   describe 'complex inclusion, exclusion' do
-    let(:r) { parse(expression).to_ast.to_proc }
     let(:expression) do
       'if[any?[difference{101}[1]] 2 if[list_equal?{101}[1] 1]]'
     end
@@ -137,7 +136,6 @@ describe 'dashboard examples' do
   end
 
   describe 'any with intersect' do
-    let(:r) { parse(expression).to_ast.to_proc }
     let(:expression) do
       'if[any?[intersect{101}[1 2 3]] 1 0]'
     end

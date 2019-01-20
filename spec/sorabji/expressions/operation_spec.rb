@@ -17,7 +17,7 @@ describe Sorabji::StackOperation do
     ['+', '*', '/', '-'].each do |operator|
       ["125#{operator}500", "125 #{operator}500", "125 #{operator} 500"].each do |example|
         describe "operation :: #{operator} #{example}" do
-          let(:proc_object){ parse(example).to_ast.to_proc }
+          let(:proc_object){ parse_to_proc(example) }
           specify "operation to_proc <#{example}>" do
             3.times do
               expect(proc_object.call(object)).to eq expectations[operator][:result]

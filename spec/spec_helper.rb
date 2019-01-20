@@ -11,6 +11,10 @@ module SpecHelpers
   def parse(str)
     parser.parse(str)
   end
+
+  def parse_to_proc(str)
+    parse(str).to_ast.to_proc
+  end
 end
 
 RSpec.configure do |config|

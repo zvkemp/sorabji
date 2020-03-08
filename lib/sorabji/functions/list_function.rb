@@ -8,8 +8,14 @@ module Sorabji
 
   class ListFunction < Struct.new(:left, :right, :operation)
     LIST_EQUAL = 'list_equal?'.freeze
+    HAS_ALL = 'has_all?'.freeze
+    HAS_ANY = 'has_any?'.freeze
+
     def to_proc
       return to_list_equal_proc if operation == LIST_EQUAL
+      return to_list_equal_proc if operation == HAS_ALL
+      return to_list_has_any_proc if operation == HAS_ANY
+
       sym = symbol_for(operation)
       ->(r){ Array(left.to_proc.call(r)).flatten.send(sym, Array(right.to_proc.call(r)).flatten) }
     end
@@ -24,6 +30,13 @@ module Sorabji
       -> (r) {
         Array(left.to_proc.call(r)).flatten.to_set ==
           Array(right.to_proc.call(r)).flatten.to_set
+      }
+    end
+
+    def to_list_has_any_proc
+      -> (r) {
+        (Array(left.to_proc.call(r)).flatten.to_set &
+          Array(right.to_proc.call(r)).flatten.to_set).any?(&:present?)
       }
     end
 

@@ -43,7 +43,7 @@ grammar Sorabji
   end
 
   rule list_function
-    operation:('union' / 'join' / 'difference' / 'intersect' / 'list_equal?') left:argument_list right:argument_list <Sorabji::ListFunctionNode>
+    operation:('union' / 'join' / 'difference' / 'intersect' / 'list_equal?' / 'has_any?' / 'has_all?') left:argument_list right:argument_list <Sorabji::ListFunctionNode>
   end
 
   rule function

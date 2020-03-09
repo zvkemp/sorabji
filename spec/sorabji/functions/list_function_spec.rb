@@ -15,8 +15,8 @@ describe Sorabji::ListFunction do
     ["has_any?{101 102}[101 102 103]", { 101 => [102, 5, 0], 102 => 101 }, true, "has_any? two compound matches"],
 
     ["has_all?{101}[101 102 103]", { 101 => [101, 105, 110] }, false, "has_all? one match"],
-    ["has_all?{101}[101 102 103]", { 101 => [101, 102, 103, 105, 110] }, false, "has_all? all match"],
-    ["has_all?{101 102}[101 102 103]", { 101 => [101, 103, 105, 110], 102 => 102 }, false, "has_all? all match (compound keys)"],
+    ["has_all?{101}[101 102 103]", { 101 => [101, 102, 103, 105, 110] }, true, "has_all? all match"],
+    ["has_all?{101 102}[101 102 103]", { 101 => [101, 103, 105, 110], 102 => 102 }, true, "has_all? all match (compound keys)"],
 
   ].each do |example, object, expectation, desc|
     describe desc do

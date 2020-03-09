@@ -13,7 +13,7 @@ module Sorabji
 
     def to_proc
       return to_list_equal_proc if operation == LIST_EQUAL
-      return to_list_equal_proc if operation == HAS_ALL
+      return to_list_has_all_proc if operation == HAS_ALL
       return to_list_has_any_proc if operation == HAS_ANY
 
       sym = symbol_for(operation)
@@ -37,6 +37,13 @@ module Sorabji
       -> (r) {
         (Array(left.to_proc.call(r)).flatten.to_set &
           Array(right.to_proc.call(r)).flatten.to_set).any?(&:present?)
+      }
+    end
+
+    def to_list_has_all_proc
+      -> (r) {
+        right_set = Array(right.to_proc.call(r)).flatten.to_set
+        right_set.subset?(Array(left.to_proc.call(r)).flatten.to_set)
       }
     end
 
